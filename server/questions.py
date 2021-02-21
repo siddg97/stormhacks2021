@@ -1,86 +1,33 @@
-
+import string
+from constants import sample
 
 """
 General Question Pool:
-- Tell me about yourself
+- Tell me about yourself?
 - What yo know about our company?
 - What do you understand about the role?
 - Why are you interested in working at our company?
 - What motivates you in a job?
 
-Soft Skill Question Template:
-- Tell me about a time you demonstrated <xxx> ability?
-
-Hard Skill Question Template:
-- Tell me about a time you used <xxx>?
-"""
-
-sample = """
-Brain Box is an end-to-end digital consultancy specializing in web applications, e-commerce, and marketing platforms. We work in all industries, which allows us to learn and apply those learnings to the products we build. Our internal suite of products includes Insuretech, HRtech, and Fintech.
-
-We help businesses redefine their processes using intelligent automation and complex integrations to reduce manual errors and increase high-and-low skilled employee productivity.
-
-We are looking for a talented and diversely skilled full-stack developer to join our team of designers, developers and digital strategists.
-
-Qualifications:
-
-3+ years of experience using PHP & HTML/CSS.
-2+ years of experience using the Laravel PHP framework.
-1+ years of experience using Vue.js.
-Comprehensive understanding of Object-Oriented PHP and design patterns.
-Passionate about writing clean code.
-Working knowledge of Git version control.
-Accurate time-estimation skills.
-Front-end development skills including HTML5, CSS3, Sass, Bootstrap, jQuery, and JavaScript.
-Ability to convert a design to pixel perfect HTML and CSS.
-Hands-on knowledge of responsive web development.
-Ensure and test the front-end code for required supported browsers and devices.
-Experience with MVVM frameworks (Vue.js, Angular, React) and developing APIs.
-Strong experience architecting and working with relational databases (MySQL, PostgreSQL, MariaDB, etc.)
-Ability to plan and manage the development process.
-Solid organization and time management skills.
-Strong attention to detail.
-A team player
-Experience in conflict resolution
-Excellent planning skills
-A quick study and a willingness to learn new things.
-Participating in learning and development opportunities.
-Excellent troubleshooting skills.
-Embraces feedback and discussing the best approach.
-Nice to have:
-
-A/B testing using Google Analytics.
-Experience working in an Agile Software Development environment.
-Ability to optimize an application for maximum speed and scalability.
-Worked with continuous integration.
-Experience doing code reviews.
-Sound like a good fit? Send us your resume and work, and if we like what we see, we’ll contact you for a chat.
-
-Job Types: Full-time, Permanent
-
-Salary: $75,000.00-$85,000.00 per year
-
-COVID-19 considerations:
-Due to COVID, we are all working remotely. All our employees are provided with the latest Macbook Pro, so working from home is a breeze.
-
-Experience:
-
-HTML/CSS: 3 years (Required)
-Laravel: 2 years (Required)
-PHP: 3 years (Required)
-VueJS: 1 year (Preferred)
-Location:
-
-Toronto, ON (Preferred)
-Work remotely:
-
-Temporarily due to COVID-19
 """
 
 technical_skill_list = [
     "PHP",
     "HTML",
     "CSS",
+    "C++",
+    "C",
+    "Java",
+    "SQL",
+    "MongoDB",
+    "React-native",
+    "AWS",
+    "Azure",
+    "Docker",
+    "Kubernetes",
+    "JIRA",
+    "Visual Studio",
+    "GCP",
     "Vue.js",
     "VueJS",
     "Object-Oriented",
@@ -115,35 +62,52 @@ soft_skill_list = [
     "organization",
     "troubleshooting",
     "team",
+    "teamwork",
     "conflict resolution",
     "behavioural",
     "quick learning",
 ]
-import string
 
-def match_keyword(kw):
-    present = kw.lower() in sample.lower()
-    words = sample.lower().split()
+tech_question_templates = [
+    "Tell me about a time you used *?",
+    "Have you much time have you been using * for?"
+]
 
-    table = str.maketrans('', '', string.punctuation)
-    stripped_sample = [word.translate(table) for word in words]
+soft_question_templates = [
+    "Tell me about a time you demonstrated * skills?",
+]
 
-    count = 0
-    for word in stripped_sample:
-        if kw.lower() == word:
-            count += 1
+def match_skill(description):
+    def match_keyword(kw):
+        words = description.lower().split()
+        table = str.maketrans('', '', string.punctuation)
+        stripped_sample = [word.translate(table) for word in words]
+        count = 0
+        for word in stripped_sample:
+            if kw.lower() == word:
+                count += 1
+        return {
+            'count': count,
+            'skill': kw,
+        }
+    return match_keyword
 
-    return count
+def process_tech_skills(text):
+    match_technical = list(map(match_skill(text), technical_skill_list))
+    sorted_match = sorted(match_technical, key=lambda k: -k['count'])
+    return sorted_match
 
-match_technical = list(map(match_keyword, technical_skill_list))
-print(match_technical)
-print('Technical Skills')
-for i in range(len(match_technical)):
-    if match_technical[i]:
-        print(f'Matched "{technical_skill_list[i]}" in description')
+def process_soft_skill(text):
+    match_soft = list(map(match_skill(text), soft_skill_list))
+    sorted_match = sorted(match_soft, key=lambda k: -k['count'])
+    return sorted_match
 
-match_soft = list(map(match_keyword, soft_skill_list))
-print('\nSoft Skills')
-for i in range(len(match_soft)):
-    if match_soft[i]:
-        print(f'Matched "{soft_skill_list[i]} skills" in description')
+def gen_questions(matches, templates, limit=3):
+    filtered = list(filter(lambda m: int(m['count']) > 0, matches))
+    skills = list(map(lambda m: m['skill'], filtered))
+    questions = []
+    for i in range(len(skills)):
+        for j in range(len(templates)):
+            questions.append(templates[j].replace('*', skills[i]))
+    return questions
+
