@@ -82,6 +82,7 @@ technical_skill_list = [
     "HTML",
     "CSS",
     "Vue.js",
+    "VueJS",
     "Object-Oriented",
     "Git",
     "HTML5",
@@ -118,14 +119,24 @@ soft_skill_list = [
     "behavioural",
     "quick learning",
 ]
+import string
 
 def match_keyword(kw):
     present = kw.lower() in sample.lower()
+    words = sample.lower().split()
+
+    table = str.maketrans('', '', string.punctuation)
+    stripped_sample = [word.translate(table) for word in words]
+
     count = 0
-    if present:
-        count = sum(kw.lower() in sample.lower())
+    for word in stripped_sample:
+        if kw.lower() == word:
+            count += 1
+
+    return count
 
 match_technical = list(map(match_keyword, technical_skill_list))
+print(match_technical)
 print('Technical Skills')
 for i in range(len(match_technical)):
     if match_technical[i]:
