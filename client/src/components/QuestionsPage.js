@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Input, Button } from 'rsuite';
-
 import styled from 'styled-components';
 import QuestionsList from './QuestionsList';
 import InterviewTypeModal from './InterviewTypeModal';
+import EmailForm from './EmailForm';
 
 const Div = styled.div`
   display: flex;
@@ -95,7 +95,7 @@ const QuestionsPage = () => {
         />
       </QuestionsContainer>
 
-
+      <EmailForm />
 
       <h1>How To Practice With LOGO</h1>
       <List>
