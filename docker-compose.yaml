@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+    # Load balancer
+    nginx:
+        build: ./nginx
+        container_name: nginx_gateway
+        restart: always
+        links:
+            - server
+            - client
+        depends_on:
+            - server
+            - client
+        ports:
+            - '8000:80'
+        volumes:
+            - ./nginx:/etc/nginx/conf.d
+
+    # React app
+    client:
+        container_name: client
+        build: ./client
+        restart: always
+        environment:
+            - CI=true
+            - NODE_ENV=development
+        expose:
+            - 3000
+        volumes:
+            - ./client:/app
+
+    # Backend
+    server:
+        build: ./server
+        container_name: server
+        restart: always
+        expose:
+            - 5000
+        volumes:
+            - ./server:/app

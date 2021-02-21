@@ -2,11 +2,11 @@ from flask import Flask
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/api')
 def hello_docker():
-    return 'Flask app is running in a Docker container'
+    return 'Flask app is running'
 
-@app.route('/test')
+@app.route('/api/test')
 def get_current_time():
     return "this was an endpoint test"
 
