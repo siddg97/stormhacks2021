@@ -7,6 +7,7 @@ import {
 import LandingPage from './components/LandingPage';
 import ScanJobPage from './components/ScanJobPage';
 import QuestionsPage from './components/QuestionsPage'
+import QuestionChoicePage from './components/QuestionChoicePage'
 import Navbar from './components/Navbar';
 import './App.css';
 import 'rsuite/dist/styles/rsuite-default.css';
@@ -28,6 +29,9 @@ function App() {
             </Route>
             <Route path="/questions">
               <QuestionsPage />
+            </Route>
+            <Route path="/choosequestions">
+              <QuestionChoicePage />
             </Route>
             <Route path="/">
               <LandingPage />
