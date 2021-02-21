@@ -17,6 +17,15 @@ services:
         volumes:
             - ./nginx:/etc/nginx/conf.d
 
+    # mongodb
+    mongo:
+        image: mongo
+        container_name: mongo
+        restart: always
+        command: mongod
+        expose:
+            - 27017
+
     # React app
     client:
         container_name: client
@@ -35,6 +44,10 @@ services:
         build: ./server
         container_name: server
         restart: always
+        links:
+            - mongo
+        depends_on:
+            - mongo
         environment:
             - GOOGLE_APPLICATION_CREDENTIALS=creds.json
         expose:

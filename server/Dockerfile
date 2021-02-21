@@ -3,7 +3,7 @@ WORKDIR /app
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
-    apt-get install -y python3.8 python3-pip python3.8-dev ffmpeg
+    apt-get install -y build-essential python3.8 python3-pip python3.8-dev ffmpeg
 
 COPY ./requirements.txt ./requirements.txt
 
