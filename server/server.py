@@ -3,6 +3,13 @@ from constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
 from stats import upload_file, get_stats, get_transcript
 from uuid import uuid4
 import subprocess
+from questions import (
+    gen_questions,
+    tech_question_templates,
+    soft_question_templates,
+    process_tech_skills,
+    process_soft_skill
+)
 
 app = Flask(__name__)
 
@@ -10,7 +17,7 @@ def convert_to_wav(file):
     command = ['ffmpeg', '-i', file + ".webm", file + ".wav"]
     subprocess.run(command,stdout=subprocess.PIPE,stdin=subprocess.PIPE)
 
-@app.route('/api/pin', methods=['GET'])
+@app.route('/api/ping', methods=['GET'])
 def hello_docker():
     return { 'pong': 'Flask is running'}
 
@@ -51,5 +58,26 @@ def get_stats_for_audio():
         'stats': stats
     }, 200
 
+@app.route('/api/gen-questions', methods=['GET'])
+def get_questions_for_jd():
+    body = request.get_json(force=True)
+    jd = body['jobdesc']
+    t_skills = process_tech_skills(jd)
+    s_skills = process_soft_skill(jd)
+
+    return {
+        'soft': gen_questions(s_skills, soft_question_templates),
+        'tech': gen_questions(t_skills, tech_question_templates)
+    }, 200
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+
+# match_technical = process_tech_skills(sample)
+# tq = gen_questions(match_technical, tech_question_templates)
+# print(tq)
+
+# match_soft = process_soft_skill(sample)
+# sq = gen_questions(match_soft, soft_question_templates)
+# print(sq)
