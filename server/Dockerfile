@@ -1,11 +1,13 @@
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 WORKDIR /app
 
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
-    apt-get install -y python3 python3-pip python3-dev
+    apt-get install -y python3.8 python3-pip python3.8-dev ffmpeg
 
-COPY ./requirements.txt /app/requirements.txt
+COPY ./requirements.txt ./requirements.txt
 
+RUN pip3 install --upgrade setuptools pip cython
 RUN pip3 install -r requirements.txt
 
 COPY . /app

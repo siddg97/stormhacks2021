@@ -35,6 +35,8 @@ services:
         build: ./server
         container_name: server
         restart: always
+        environment:
+            - GOOGLE_APPLICATION_CREDENTIALS=creds.json
         expose:
             - 5000
         volumes:

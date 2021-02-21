@@ -1,14 +1,55 @@
-from flask import Flask
+from flask import Flask, request
+from constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
+from stats import upload_file, get_stats, get_transcript
+from uuid import uuid4
+import subprocess
 
 app = Flask(__name__)
 
-@app.route('/api')
-def hello_docker():
-    return 'Flask app is running'
+def convert_to_wav(file):
+    command = ['ffmpeg', '-i', file + ".webm", file + ".wav"]
+    subprocess.run(command,stdout=subprocess.PIPE,stdin=subprocess.PIPE)
 
-@app.route('/api/test')
-def get_current_time():
-    return "this was an endpoint test"
+@app.route('/api/pin', methods=['GET'])
+def hello_docker():
+    return { 'pong': 'Flask is running'}
+
+@app.route('/api/audio-stats', methods=['POST'])
+def get_stats_for_audio():
+    """
+    1. Take sample Wave file
+    2. upload to a temp directory in cloud storage, with a unique name
+    3. Fetch transcripts from gcloud
+    4. get stats using the .praat file
+    4. return stats
+    """
+    webm_file = request.files['audio']
+    blob_name = str(uuid4())
+
+    file_path_with_name = f'{TMP_DIR}/{blob_name}'
+    wav_fp = f'{file_path_with_name}{WAV_EXT}'
+    webm_fp = f'{file_path_with_name}{WEBM_EXT}'
+
+    webm_file.save(webm_fp)
+
+    # convert to webm to wav file
+    convert_to_wav(file_path_with_name)
+
+    # upload to bucket
+    upload_file(GCS_BUCKET, f'{blob_name}{WAV_EXT}', wav_fp)
+    print('[INFO]: done uploading')
+
+    # retrieve transcripts
+    transcript = get_transcript(f'gs://{GCS_BUCKET}/{blob_name}{WAV_EXT}')
+    print('[INFO]: transcript received')
+
+    # compute stats
+    stats = get_stats(transcript, f'{blob_name}{WAV_EXT}', TMP_DIR)
+    print('[INFO]: stats computed')
+
+    return {
+        'stats': stats
+    }, 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
