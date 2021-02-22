@@ -4,7 +4,9 @@
 <p>Created by: Brandon Situ, Siddharth Gupta, Shirley Vong, and Jake Pauls</p>
 <p> ⚡ Stormhacks 2021 ⚡ </p>
 <p> 🥈 2nd Place Overall  </p>
+
 ---
+
 ## Inspiration
 
 Job seekers may have less opportunities to conduct mock interviews with each other. InterviewBuddy.space seeks to solve this problem by providing a mock interview AI and peer interview system.
