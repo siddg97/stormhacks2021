@@ -1,4 +1,4 @@
-![alt text](https://github.com/siddg97/stormhacks2021/blob/master/img/logo.png?raw=true)
+![alt text](https://github.com/siddg97/stormhacks2021/blob/master/img/logo.svg?raw=true)
 <p align="left">
     <p>Created by: Brandon Situ, Siddharth Gupta, Shirley Vong, and Jake Pauls</p>
     <p> ⚡ Stormhacks 2021 ⚡ </p>
