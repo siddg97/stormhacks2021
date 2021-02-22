@@ -104,7 +104,7 @@ def get_stats_for_audio(uid):
 
     return {}, 200
 
-@app.route('/api/gen-questions', methods=['GET'])
+@app.route('/api/gen-questions', methods=['POST'])
 def get_questions_for_jd():
     body = request.get_json(force=True)
     jd = body['jobdesc']
