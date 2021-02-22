@@ -1,6 +1,4 @@
-<p align="left">
-  <img src="./img/logo.png" alt="InterviewBuddy.online" height="250" />
-</p>
+![alt text](https://github.com/siddg97/stormhacks2021/blob/master/img/logo.png?raw=true)
 <p>Created by: Brandon Situ, Siddharth Gupta, Shirley Vong, and Jake Pauls</p>
 <p> ⚡ Stormhacks 2021 ⚡ </p>
 <p> 🥈 2nd Place Overall  </p>
