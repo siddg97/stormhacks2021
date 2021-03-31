@@ -14,6 +14,6 @@ ADD ./requirements.txt ./requirements.txt
 RUN pip3 install --upgrade setuptools pip cython
 RUN pip3 install -r requirements.txt
 
-ADD . /app
+COPY . /app
 
 CMD ["python3", "server.py"]
