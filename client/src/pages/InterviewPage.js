@@ -12,10 +12,11 @@ const InterviewPage = ({ questions }) => {
   const handleQuestionDone = (answer) => {
     if (idx < questions.length) {
       setAnswer(answer);
-      setIdx(idx + 1);
-    };
+    }
 
-    if (idx >= questions.length) {
+    if (idx < questions.length - 1) {
+      setIdx(idx + 1);
+    } else {
       console.log('interview done');
     }
   };
@@ -29,7 +30,7 @@ const InterviewPage = ({ questions }) => {
         handleQuestionDone={handleQuestionDone}
       />
     </div>
-  )
+  );
 };
 
 export default InterviewPage;
