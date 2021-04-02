@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Question from '../new-components/Question';
 
-const InterviewPage = ({ questions }) => {
+const InterviewPage = () => {
+  const { questions } = useLocation().state;
+
   const [idx, setIdx] = useState(0);
   const [answers, _] = useState([]);
 
