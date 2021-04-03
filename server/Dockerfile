@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y && \
     apt-get install -y build-essential ffmpeg cmake
 
-# Install Requirements 
+# Install Requirements
 ADD ./requirements.txt ./requirements.txt
 
 RUN pip3 install --upgrade setuptools pip cython

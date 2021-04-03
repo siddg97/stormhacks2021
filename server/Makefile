@@ -1,6 +1,7 @@
 MONGO_CONTAINER_NAME=ib-mongo
-MONGO_URI=mongodb://localhost:27020/db
-TEST_MONGO_URI=mongodb://localhost:27020/test_db
+MONGO_PORT=27020
+MONGO_URI=mongodb://localhost:$(MONGO_PORT)/db
+TEST_MONGO_URI=mongodb://localhost:$(MONGO_PORT)/test_db
 
 deps:
 	pip install -r requirements.txt
@@ -20,7 +21,7 @@ run_local:
 
 run_mongo:
 	@echo "Starting mongo container..."
-	docker run --rm --name $(MONGO_CONTAINER_NAME) -p 27020:27017 -d mongo
+	docker run --rm --name $(MONGO_CONTAINER_NAME) -p $(MONGO_PORT):27017 -d mongo
 
 rm_mongo:
 	@echo "Purging mongo container..."
