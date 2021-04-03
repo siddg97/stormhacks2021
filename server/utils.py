@@ -1,11 +1,16 @@
+from constants import WAV_EXT, WEBM_EXT
 import subprocess
+import os
 from google.cloud import speech, storage
+
+def delete_local_file(file_path):
+    os.remove(file_path)
 
 def convert_to_wav(file):
     """
     Convert webm encoded file to wav audio encoding
     """
-    command = ['ffmpeg', '-i', file + ".webm", file + ".wav"]
+    command = ['ffmpeg', '-i', f'{file}{WEBM_EXT}', f'{file}{WAV_EXT}', '-loglevel', 'error']
     subprocess.run(command,stdout=subprocess.PIPE,stdin=subprocess.PIPE)
 
 def read_file(bucket_name, blob, destination):

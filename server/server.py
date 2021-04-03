@@ -1,7 +1,7 @@
+from utils import delete_local_file, convert_to_wav, upload_file
 from flask import Flask, request
 from constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
 from uuid import uuid1, uuid4
-from utils import convert_to_wav, upload_file
 
 # flask app
 app = Flask(__name__)
@@ -18,19 +18,26 @@ def submit_answer():
     """
     webm_file = request.files['audio']
     blob_name = str(uuid4())
-
     file_path = f'{TMP_DIR}/{blob_name}'
     wav_file_path = f'{file_path}{WAV_EXT}'
     webm_file_path = f'{file_path}{WEBM_EXT}'
 
+    print('[INFO]: Saving .webm file')
     webm_file.save(webm_file_path)
+
     # convert to webm to wav file
     convert_to_wav(file_path)
+    print('[INFO]: Converting .webm to .wav file')
 
     # upload to bucket
     upload_file(GCS_BUCKET, f'{blob_name}{WAV_EXT}', wav_file_path)
-    print('[INFO]: done uploading')
+    print('[INFO]: Uploaded .wav file to GCS bucket')
 
+    # cleanup webm and wav file in temp directory
+    print('[INFO]: Cleaning up local temp directory')
+    delete_local_file(webm_file_path)
+    delete_local_file(wav_file_path)
+    print('[INFO]: Cleanup complete !!')
     return {}, 200
 
 
