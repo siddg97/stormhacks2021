@@ -1,4 +1,3 @@
-
 import { useHistory } from 'react-router-dom';
 import QuestionsForm from '../new-components/QuestionsForm';
 import { SELECT_QUESTIONS_INSTRUCTIONS, SELECT_QUESTIONS_INFO, routes } from '../constants';
