@@ -1,6 +1,6 @@
 from flask import request, Response
 
-from utils.constants import USER_COOKIE_KEY
+from app.utils.constants import USER_COOKIE_KEY
 
 
 def get_user_cookie():

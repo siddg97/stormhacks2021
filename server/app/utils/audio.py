@@ -1,4 +1,4 @@
-from utils.constants import WAV_EXT, WEBM_EXT
+from app.utils.constants import WAV_EXT, WEBM_EXT
 import subprocess
 from google.cloud import speech
 

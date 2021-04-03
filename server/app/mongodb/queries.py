@@ -3,9 +3,9 @@ from datetime import datetime
 from bson.objectid import ObjectId
 from pymongo import ReturnDocument
 
-from mongodb.db import mongo
-from mongodb.utils import serialize_doc, serialize_id
-from utils.constants import GCS_BUCKET
+from app.mongodb.db import mongo
+from app.mongodb.utils import serialize_doc, serialize_id
+from app.utils.constants import GCS_BUCKET
 
 
 def create_new_user():

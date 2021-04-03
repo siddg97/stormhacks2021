@@ -12,3 +12,4 @@ praat-parselmouth==0.3.3
 numpy==1.17.4
 pandas==1.2.0
 uuid==1.30
+pytest==6.2.2

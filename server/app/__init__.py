@@ -1,17 +1,17 @@
-from mongodb.db import init_mongo
-from mongodb.queries import (
+from app.mongodb.db import init_mongo
+from app.mongodb.queries import (
     add_answer,
     bulk_create_questions,
     create_new_user,
     create_question,
     get_question_by_id,
 )
-from utils.cookies import get_user_cookie, set_user_cookie
+from app.utils.cookies import get_user_cookie, set_user_cookie
 
-from utils.misc import delete_local_file, now
-from utils.gcs import upload_file
-from utils.audio import convert_to_wav
-from utils.constants import GCS_BUCKET, TMP_DIR, USER_COOKIE_KEY, WEBM_EXT, WAV_EXT
+from app.utils.misc import delete_local_file, now
+from app.utils.gcs import upload_file
+from app.utils.audio import convert_to_wav
+from app.utils.constants import GCS_BUCKET, TMP_DIR, USER_COOKIE_KEY, WEBM_EXT, WAV_EXT
 
 from flask.ctx import after_this_request
 from flask import Flask, request
@@ -31,7 +31,7 @@ def create_app(test=False):
 
     @app.route("/api/ping", methods=["GET"])
     def ping():
-        return {"pong": "pong"}, 200
+        return {"ping": "pong"}, 200
 
     @app.route("/api/questions", methods=["POST"])
     def index():
@@ -54,7 +54,7 @@ def create_app(test=False):
     @app.route("/api/questions/<question_id>", methods=["GET"])
     def get_question(question_id):
         question = get_question_by_id(question_id)
-        return {"question": question}, 200
+        return {"question": question}, 404 if not question else 200
 
     @app.route("/api/questions/<question_id>/answer", methods=["POST"])
     def submit_answer(question_id):
@@ -94,14 +94,9 @@ def create_app(test=False):
         delete_local_file(webm_file_path)
         delete_local_file(wav_file_path)
         print("[INFO]: Cleanup complete !!")
-        return {"question": question}, 200
+        return {"question": question}, 201
 
     return app
-
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True, host="0.0.0.0")
 
 
 # @app.route('/api/results/<uid>/<type>', methods=['GET'])
