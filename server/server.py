@@ -1,14 +1,27 @@
-from utils import delete_local_file, convert_to_wav, upload_file
-from flask import Flask, request
-from constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
-from uuid import uuid1, uuid4
+from mongo import init_mongo
+from mongo.queries import create_new_user, get_user_by_id
 
-# flask app
+from utils.misc import delete_local_file
+from utils.gcs import upload_file
+from utils.audio import convert_to_wav
+from utils.constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
+
+from flask import Flask, request
+from uuid import uuid4
+
+# flask app init and mongo configuration
 app = Flask(__name__)
+init_mongo(app)
 
 @app.route('/api/ping', methods=['GET'])
 def ping():
     return { 'pong': 'pong' }, 200
+
+@app.route('/api/test', methods=['GET'])
+def test():
+    user = create_new_user()
+    user = get_user_by_id(user)
+    return { 'user': user }
 
 @app.route('/api/submit', methods=['POST'])
 def submit_answer():
@@ -16,6 +29,9 @@ def submit_answer():
     1. Take sample Wave file
     2. upload to a temp directory in cloud storage, with a unique name
     """
+    user_id = request.cookies.get('IB-USER-ID')
+    print(f'user_id: {user_id}')
+
     webm_file = request.files['audio']
     blob_name = str(uuid4())
     file_path = f'{TMP_DIR}/{blob_name}'
@@ -80,35 +96,6 @@ def submit_answer():
 #             'en': en,
 #         },
 #     }
-
-# @app.route('/api/submit-answer/<uid>', methods=['POST'])
-# def get_stats_for_audio(uid):
-#     """
-#     1. Take sample Wave file
-#     2. upload to a temp directory in cloud storage, with a unique name
-#     3. Fetch transcripts from gcloud
-#     4. get stats using the .praat file
-#     4. return stats
-#     """
-#     webm_file = request.files['audio']
-#     blob_name = str(uuid4())
-
-#     users.update_one({ 'uid': uid },  {'$push': {'bucket_files': f"{blob_name}{WAV_EXT}" }})
-
-#     file_path_with_name = f'{TMP_DIR}/{blob_name}'
-#     wav_fp = f'{file_path_with_name}{WAV_EXT}'
-#     webm_fp = f'{file_path_with_name}{WEBM_EXT}'
-
-#     webm_file.save(webm_fp)
-
-#     # convert to webm to wav file
-#     convert_to_wav(file_path_with_name)
-
-#     # upload to bucket
-#     upload_file(GCS_BUCKET, f'{uid}/{blob_name}{WAV_EXT}', wav_fp)
-#     print('[INFO]: done uploading')
-
-#     return {}, 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
