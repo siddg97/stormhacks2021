@@ -1,5 +1,4 @@
 import string
-from constants import sample
 
 """
 General Question Pool:
@@ -8,7 +7,6 @@ General Question Pool:
 - What do you understand about the role?
 - Why are you interested in working at our company?
 - What motivates you in a job?
-
 """
 
 technical_skill_list = [
