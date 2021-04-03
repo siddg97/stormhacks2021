@@ -1,2 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish&family=Poppins&display=swap');
+
 .App {
+  font-family: 'Mulish', sans-serif;
+}
+
+p {
+  white-space: break-spaces;
+  color: #737B7D;
+}
+
+h1 {
+  color: #373F41;
 }
