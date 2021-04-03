@@ -1,4 +1,5 @@
-GCS_BUCKET = 'stormhacks-interviewprep'
-TMP_DIR = '/tmp'
-WAV_EXT = '.wav'
-WEBM_EXT = '.webm'
+GCS_BUCKET = "stormhacks-interviewprep"
+TMP_DIR = "/tmp"
+WAV_EXT = ".wav"
+WEBM_EXT = ".webm"
+USER_COOKIE_KEY = "IB_USER_ID"

@@ -1,5 +1,6 @@
 from google.cloud import storage
 
+
 def read_file(bucket_name, blob, destination):
     """
     Fetch the file from google cloud storage bucket
@@ -13,6 +14,7 @@ def read_file(bucket_name, blob, destination):
     blob = bucket.blob(blob)
     blob.download_to_filename(destination)
 
+
 def upload_file(bucket_name, blob, destination):
     """
     Upload the file to google cloud storage bucket
@@ -25,4 +27,3 @@ def upload_file(bucket_name, blob, destination):
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob)
     blob.upload_from_filename(destination)
-
