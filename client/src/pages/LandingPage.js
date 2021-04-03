@@ -14,12 +14,12 @@ const Div = styled.div`
 const LandingDiv = styled.div`
   box-sizing: border-box;
   max-width: 450px;
-  padding: 50px 0;
+  padding: 20 0 40px 0;
 `;
 
 const AboutDiv = styled.div`
   max-width: 600px;
-  padding: 50px;
+  padding: 40px;
 `;
 
 const Button = styled(StyledButton)`

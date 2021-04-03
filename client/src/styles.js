@@ -20,4 +20,9 @@ export const StyledButton = styled.button`
   border-radius: 3px;
   padding: 12px 30px;
   border: none;
+
+  &:hover {
+    opacity: 0.85;
+    transition: opacity 0.1s linear;
+  }
 `;

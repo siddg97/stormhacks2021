@@ -5,13 +5,15 @@ const Image = styled.img`
   width: 180px;
   height: 180px;
   object-fit: cover;
+  border-radius: 3px;
+  padding-bottom: 10px;
 `;
 
 const ContributorDiv = styled.div`
   display: flex;
   flex-direction: column;
   text-align: center;
-  padding: 10px;
+  padding: 20px;
 `;
 
 const ContribListDiv = styled.div`
@@ -43,7 +45,7 @@ const Text = styled.p`
 const About = () => {
   const contributors = [
     {
-      image: 'https://pbs.twimg.com/profile_images/1092451626781163523/0YzJMi-8.jpg',
+      image: 'https://a1cf74336522e87f135f-2f21ace9a6cf0052456644b80fa06d4f.ssl.cf2.rackcdn.com/images/characters_opt/p-ses-bert.jpg',
       name: 'Brandon Situ',
       role: 'UI/UX, PM',
       school: 'SFU Business',
