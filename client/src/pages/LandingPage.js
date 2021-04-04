@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router-dom';
-import About from '../new-components/About';
 import styled from 'styled-components';
+import About from '../new-components/About';
 import { routes } from '../constants';
 import { ReactComponent as Logo } from '../logoWithTitle.svg';
 import { StyledButton } from '../styles';
@@ -14,12 +14,12 @@ const Div = styled.div`
 const LandingDiv = styled.div`
   box-sizing: border-box;
   max-width: 450px;
-  padding: 20 0 40px 0;
+  padding: 30px 0;
 `;
 
 const AboutDiv = styled.div`
   max-width: 600px;
-  padding: 40px;
+  padding: 30px 0;
 `;
 
 const Button = styled(StyledButton)`

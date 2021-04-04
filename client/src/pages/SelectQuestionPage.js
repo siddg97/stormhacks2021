@@ -1,6 +1,22 @@
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
 import QuestionsForm from '../new-components/QuestionsForm';
 import { SELECT_QUESTIONS_INSTRUCTIONS, SELECT_QUESTIONS_INFO, routes } from '../constants';
+
+const Div = styled.div`
+  max-width: 700px;
+  margin: 0 auto
+`;
+
+const FormWrapper = styled.div`
+  max-width: 700px;
+  width: 100%;
+  margin: 10px;
+`;
+
+const Header = styled.h1`
+  text-align: center;
+`;
 
 const QuestionSelectPage = () => {
   const history = useHistory();
@@ -13,14 +29,16 @@ const QuestionSelectPage = () => {
   };
 
   return (
-    <div>
-      <h1>Instructions</h1>
+    <Div>
+      <Header>Instructions</Header>
       <p>{SELECT_QUESTIONS_INSTRUCTIONS}</p>
 
-      <h1>Select Your Questions</h1>
+      <Header>Select Your Questions</Header>
       <p>{SELECT_QUESTIONS_INFO}</p>
-      <QuestionsForm handleSubmit={submit} />
-    </div>
+      <FormWrapper>
+        <QuestionsForm handleSubmit={submit} />
+      </FormWrapper>
+    </Div>
   );
 };
 
