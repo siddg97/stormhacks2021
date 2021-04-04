@@ -9,12 +9,6 @@ deps:
 init_venv:
 	python3 -m venv env
 
-activate_venv:
-	. env/bin/activate
-
-deactivate_env:
-	deactivate
-
 run_local:
 	$(MAKE) activate_venv
 	MONGO_URI=$(MONGO_URI) python wsgi.py

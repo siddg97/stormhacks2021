@@ -1,6 +1,7 @@
 import pytest
 from app import create_app
 from bson import ObjectId
+from app.utils.constants import USER_COOKIE_KEY
 
 from tests.utils import find_question_in_db
 
@@ -8,7 +9,8 @@ from tests.utils import find_question_in_db
 @pytest.fixture
 def client():
     app = create_app(True)
-    return app.test_client()
+    client = app.test_client()
+    return client
 
 
 def test_ping_pong(client):
@@ -32,6 +34,9 @@ def test_get_question_by_id(client):
     res = client.get(f"/api/questions/{str(ObjectId())}")
     assert res.status_code == 404
 
+    uid = str(ObjectId())
+    client.set_cookie("/", USER_COOKIE_KEY, uid)
+
     res = client.post("/api/questions", json=dict(questions=["question 1"]))
     assert res.status_code == 200
     assert len(res.json["questions"]) == 1
@@ -41,7 +46,7 @@ def test_get_question_by_id(client):
     assert res.status_code == 200
     question = res.json.get("question")
     assert question
-
     question_doc = find_question_in_db(question["_id"])
     assert question_doc
     assert question_doc["description"] == "question 1"
+    assert question_doc["user_id"] == uid

@@ -20,7 +20,7 @@ Bash Commands: (Tested on Ubuntu 20.04)
 
 ```bash
 $ make init_venv        # Only needed first time, create python virtual env
-$ make activate_venv    # Only needed first time, activate python virtual env
+$ . env/bin/activate    # Activate python virtual env
 $ make deps             # First time and as needed, install pip packages
 $ make run_mongo        # First time and as needed, run mongodb docker container
 $ make run_local        # Run the actual app
