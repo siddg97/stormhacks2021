@@ -1,5 +1,6 @@
 click==7.1.2
 Flask==1.1.2
+Flask-PyMongo==2.3.0
 itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
@@ -11,4 +12,4 @@ praat-parselmouth==0.3.3
 numpy==1.17.4
 pandas==1.2.0
 uuid==1.30
-pymongo==3.11.3
+pytest==6.2.2
