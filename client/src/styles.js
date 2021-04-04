@@ -1,19 +1,43 @@
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 
-export const theme = Object.freeze({
-  colors: {
-    primary: '#3C64B1',
-  },
-  fonts: {
-    primary: "'Mulish', sans-serif",
-    secondary: "'Poppins', sans-serif",
-  },
-});
+export const GlobalStyle = createGlobalStyle`
+  html {
+    --color-primary: #3C64B1;
+    --color-text: #737B7D;
+    --color-heading: #373F41;
+
+    --font-text: 'Mulish', sans-serif;
+    --font-header: 'Poppins', san-serif;
+  }
+
+  body {
+    font-family: var(--font-text)
+  }
+
+  p {
+    white-space: break-spaces;
+    color: var(--color-text);
+  }
+
+  h1 {
+    color: var(--color-heading);
+  }
+
+  a {
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--color-primary);
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+`;
 
 export const StyledButton = styled.button`
-  background-color: ${props => props.theme.colors.primary};
+  background-color: var(--color-primary);
   color: white;
-  font-family: ${props => props.theme.fonts.primary};
+  font-family: var(--font-text);
   font-weight: bold;
   text-align: center;
   letter-spacing: 0.3px;
