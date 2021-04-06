@@ -10,7 +10,6 @@ def serialize_docs(docs_cursor):
         return []
     docs = []
     for doc in docs_cursor:
-        print(doc)
         docs.append(doc)
     return list(map(serialize_doc, docs))
 
