@@ -1,22 +1,9 @@
 from app.mongodb.db import init_mongo
-from app.mongodb.queries import (
-    add_answer,
-    bulk_create_questions,
-    create_new_user,
-    create_question,
-    get_question_by_id,
-)
-from app.utils.cookies import get_user_cookie, set_user_cookie
-
-from app.utils.misc import delete_local_file, now
-from app.utils.gcs import upload_file
-from app.utils.audio import convert_to_wav
-from app.utils.constants import GCS_BUCKET, TMP_DIR, USER_COOKIE_KEY, WEBM_EXT, WAV_EXT
-
-from flask.ctx import after_this_request
-from flask import Flask, request
+from flask import Flask
 
 import os
+
+from app.routes import register_routes
 
 
 def create_app(test=False):
@@ -33,68 +20,7 @@ def create_app(test=False):
     def ping():
         return {"ping": "pong"}, 200
 
-    @app.route("/api/questions", methods=["POST"])
-    def index():
-        """
-        1. Check for user_id in cookie, if present get user else create new user
-        2. Create new question doc and mark with user id from previous step
-        """
-        user_id = get_user_cookie()
-        if not user_id:
-            user_id = create_new_user()
-            after_this_request(set_user_cookie(user_id))
-
-        body = request.get_json(force=True)
-        questions = body["questions"]
-        questions = list(map(lambda desc: create_question(desc, user_id), questions))
-        question_ids = bulk_create_questions(questions)
-
-        return {"questions": question_ids}, 200
-
-    @app.route("/api/questions/<question_id>", methods=["GET"])
-    def get_question(question_id):
-        question = get_question_by_id(question_id)
-        return {"question": question}, 404 if not question else 200
-
-    @app.route("/api/questions/<question_id>/answer", methods=["POST"])
-    def submit_answer(question_id):
-        """
-        1. Extract webm audio file and convert to wav file
-        2. Upload to a the users folder in cloud storage with name as question id
-        """
-        user_id = get_user_cookie()
-        # Extract file and sanity check
-        webm_file = request.files["audio"]
-        if webm_file.filename.split(".")[1] != "webm":
-            return {"error": "Invalid file type detected"}, 400
-
-        # Save webm file to convert
-        blob_name = question_id
-        file_path = f"{TMP_DIR}/{blob_name}"
-        wav_file_path = f"{file_path}{WAV_EXT}"
-        webm_file_path = f"{file_path}{WEBM_EXT}"
-        gcs_path = f"{user_id}/{blob_name}{WAV_EXT}"
-
-        print("[INFO]: Saving .webm file")
-        webm_file.save(webm_file_path)
-
-        # convert webm file to wav
-        convert_to_wav(file_path)
-        print("[INFO]: Converting .webm to .wav file")
-
-        # upload to bucket
-        upload_file(GCS_BUCKET, gcs_path, wav_file_path)
-        print("[INFO]: Uploaded .wav file to GCS bucket")
-
-        # add file path to question doc in db
-        question = add_answer(question_id, gcs_path)
-
-        # cleanup webm and wav file in temp directory
-        print("[INFO]: Cleaning up local temp directory")
-        delete_local_file(webm_file_path)
-        delete_local_file(wav_file_path)
-        print("[INFO]: Cleanup complete !!")
-        return {"question": question}, 201
+    app = register_routes(app)
 
     return app
 
