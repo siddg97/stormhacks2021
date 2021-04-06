@@ -10,7 +10,6 @@ init_venv:
 	python3 -m venv env
 
 run_local:
-	$(MAKE) activate_venv
 	MONGO_URI=$(MONGO_URI) python wsgi.py
 
 run_mongo:

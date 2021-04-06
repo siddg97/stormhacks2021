@@ -1,11 +1,11 @@
-from datetime import datetime
-
 from bson.objectid import ObjectId
 from pymongo import ReturnDocument
 
 from app.mongodb.db import mongo
-from app.mongodb.utils import serialize_doc, serialize_id
+from app.mongodb.utils import serialize_doc, serialize_docs, serialize_id, serialize_ids
 from app.utils.constants import GCS_BUCKET
+from app.utils.gcs import get_blob_url
+from app.utils.misc import now
 
 
 def create_new_user():
@@ -14,7 +14,7 @@ def create_new_user():
 
     @returns:  user_id - mongodb user document ID
     """
-    user = {"createdOn": datetime.utcnow().isoformat()}
+    user = {"createdOn": now()}
     user_doc = mongo.db.users.insert_one(user)
     return serialize_id(user_doc.inserted_id)
 
@@ -38,7 +38,7 @@ def bulk_create_questions(questions):
     @returns: list of question ids
     """
     result = mongo.db.questions.insert_many(questions)
-    return list(map(serialize_id, result.inserted_ids))
+    return serialize_ids(result.inserted_ids)
 
 
 def create_question(description, user_id):
@@ -52,6 +52,7 @@ def create_question(description, user_id):
     return {
         "description": description,
         "user_id": user_id,
+        "created_on": now(),
         "stats": {
             "words_per_min": 0,
             "filler_words_per_min": 0,
@@ -72,11 +73,16 @@ def get_question_by_id(question_id):
     return serialize_doc(question)
 
 
+def get_questions_for_user(user_id):
+    questions = mongo.db.questions.find({"user_id": user_id})
+    return serialize_docs(questions)
+
+
 def add_answer(question_id, answer_file_path):
     selector = {"_id": ObjectId(question_id)}
     updated_question = mongo.db.questions.find_one_and_update(
         selector,
-        {"$set": {"answer": f"gs://{GCS_BUCKET}/{answer_file_path}"}},
+        {"$set": {"answer": get_blob_url(GCS_BUCKET, answer_file_path)}},
         return_document=ReturnDocument.AFTER,
     )
     return serialize_doc(updated_question)

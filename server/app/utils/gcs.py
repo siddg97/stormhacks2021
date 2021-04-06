@@ -27,3 +27,7 @@ def upload_file(bucket_name, blob, destination):
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob)
     blob.upload_from_filename(destination)
+
+
+def get_blob_url(bucket, blob_path):
+    return f"gs://{bucket}/{blob_path}"

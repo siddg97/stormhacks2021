@@ -2,9 +2,9 @@ FROM node:alpine
 WORKDIR /app
 
 COPY package.json .
-COPY yarn.lock .
 
-RUN yarn install --network-timeout 1000000
+RUN yarn install
 
 COPY . .
+
 CMD [ "yarn", "start"]
