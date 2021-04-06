@@ -4,3 +4,9 @@ README.md
 .gitignore
 build
 __pycache__
+.pytest_cache
+env
+Makefile
+README.md
+.gitignore
+# tests

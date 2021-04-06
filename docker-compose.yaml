@@ -18,9 +18,9 @@ services:
             - ./nginx:/etc/nginx/conf.d
 
     # mongodb
-    mongo:
+    db:
         image: mongo
-        container_name: mongo
+        container_name: db
         restart: always
         command: mongod
         expose:
@@ -45,11 +45,12 @@ services:
         container_name: server
         restart: always
         links:
-            - mongo
+            - db
         depends_on:
-            - mongo
+            - db
         environment:
             - GOOGLE_APPLICATION_CREDENTIALS=creds.json
+            - MONGO_URI=mongodb://db:27017/db
         expose:
             - 5000
         volumes:
