@@ -2,6 +2,11 @@ class HttpError(Exception):
     pass
 
 
+class BadRequestError(HttpError):
+    code = 400
+    description = "bad request"
+
+
 class NotFoundError(HttpError):
     code = 404
     description = "resource not found"

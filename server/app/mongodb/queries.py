@@ -4,6 +4,7 @@ from pymongo import ReturnDocument
 from app.mongodb.db import mongo
 from app.mongodb.utils import serialize_doc, serialize_docs, serialize_id, serialize_ids
 from app.utils.constants import GCS_BUCKET
+from app.utils.gcs import get_blob_url
 from app.utils.misc import now
 
 
@@ -81,7 +82,7 @@ def add_answer(question_id, answer_file_path):
     selector = {"_id": ObjectId(question_id)}
     updated_question = mongo.db.questions.find_one_and_update(
         selector,
-        {"$set": {"answer": f"gs://{GCS_BUCKET}/{answer_file_path}"}},
+        {"$set": {"answer": get_blob_url(GCS_BUCKET, answer_file_path)}},
         return_document=ReturnDocument.AFTER,
     )
     return serialize_doc(updated_question)

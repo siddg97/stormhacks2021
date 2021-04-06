@@ -1,9 +1,10 @@
+from app.errors import BadRequestError, ForbiddenError
 from app.mongodb.queries import (
     add_answer,
 )
 from app.utils.cookies import get_user_cookie
 from app.utils.misc import delete_local_file
-from app.utils.gcs import upload_file
+from app.utils.gcs import get_blob_url, upload_file
 from app.utils.audio import convert_to_wav
 from app.utils.constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
 
@@ -18,10 +19,13 @@ def answer_routes(app):
         2. Upload to a the users folder in cloud storage with name as question id
         """
         user_id = get_user_cookie()
+        if not user_id:
+            raise ForbiddenError()
+
         # Extract file and sanity check
         webm_file = request.files["audio"]
         if webm_file.filename.split(".")[1] != "webm":
-            return {"error": "Invalid file type detected"}, 400
+            raise BadRequestError()
 
         # Save webm file to convert
         blob_name = question_id
@@ -30,25 +34,40 @@ def answer_routes(app):
         webm_file_path = f"{file_path}{WEBM_EXT}"
         gcs_path = f"{user_id}/{blob_name}{WAV_EXT}"
 
-        print("[INFO]: Saving .webm file")
+        app.logger.info(
+            "Saving answer .webm for question[%s] by user[%s]", question_id, user_id
+        )
         webm_file.save(webm_file_path)
 
         # convert webm file to wav
         convert_to_wav(file_path)
-        print("[INFO]: Converting .webm to .wav file")
+        app.logger.info(
+            "Coverting answer .webm for question[%s] by user[%s] to .wav file",
+            question_id,
+            user_id,
+        )
 
         # upload to bucket
         upload_file(GCS_BUCKET, gcs_path, wav_file_path)
-        print("[INFO]: Uploaded .wav file to GCS bucket")
+        app.logger.info(
+            "Uploaded answer .wav for question[%s] by user[%s] to %s",
+            question_id,
+            user_id,
+            get_blob_url(GCS_BUCKET, gcs_path),
+        )
 
         # add file path to question doc in db
         question = add_answer(question_id, gcs_path)
 
         # cleanup webm and wav file in temp directory
-        print("[INFO]: Cleaning up local temp directory")
         delete_local_file(webm_file_path)
         delete_local_file(wav_file_path)
-        print("[INFO]: Cleanup complete !!")
+        app.logger.info(
+            "Cleaned up temp answer files for question[%s] by user[%s]",
+            question_id,
+            user_id,
+        )
+
         return {"question": question}, 201
 
     return app

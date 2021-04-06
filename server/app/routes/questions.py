@@ -24,12 +24,15 @@ def question_routes(app):
         user_id = get_user_cookie()
         if not user_id:
             user_id = create_new_user()
+            app.logger.info("Created new user[%s]", user_id)
             after_this_request(set_user_cookie(user_id))
 
         body = request.get_json(force=True)
         questions = body["questions"]
         questions = list(map(lambda desc: create_question(desc, user_id), questions))
         question_ids = bulk_create_questions(questions)
+
+        app.logger.info("Created questions%s for user[%s]", str(question_ids), user_id)
 
         return {"questions": question_ids}, 201
 
@@ -41,6 +44,9 @@ def question_routes(app):
         """
         user_id = get_user_cookie()
         if not user_id:
+            app.logger.warning(
+                "Revoked unauthorized access to question[%s]", question_id
+            )
             raise ForbiddenError()
 
         question = get_question_by_id(question_id)
@@ -48,6 +54,11 @@ def question_routes(app):
             raise NotFoundError()
 
         if question["user_id"] != user_id:
+            app.logger.warning(
+                "Revoked unauthorized access to question[%s] by user[%s]",
+                question_id,
+                user_id,
+            )
             raise ForbiddenError()
 
         return {"question": question}, 200
@@ -60,6 +71,7 @@ def question_routes(app):
         """
         user_id = get_user_cookie()
         if not user_id:
+            app.logger.warning("Revoked unauthorized access to GET /api/questions")
             raise ForbiddenError()
 
         questions = get_questions_for_user(user_id)
