@@ -31,3 +31,12 @@ def upload_file(bucket_name, blob, destination):
 
 def get_blob_url(bucket, blob_path):
     return f"gs://{bucket}/{blob_path}"
+
+
+def decompose_gcs_uri(uri):
+    path = uri.split("//")[1]
+    path = path.split("/")
+    bucket = path[0]
+    blob_path = "/".join(path[1:])
+    blob_name = path[2]
+    return bucket, blob_path, blob_name

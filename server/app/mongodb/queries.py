@@ -1,4 +1,5 @@
 from bson.objectid import ObjectId
+from numpy.lib.function_base import select
 from pymongo import ReturnDocument
 
 from app.mongodb.db import mongo
@@ -54,9 +55,16 @@ def create_question(description, user_id):
         "user_id": user_id,
         "created_on": now(),
         "stats": {
-            "words_per_min": 0,
-            "filler_words_per_min": 0,
+            "articulation_rate": 0,
+            "accuracy": 0,
+            "number_of_pauses": 0,
+            "number_of_syllables": 0,
+            "original_duration": 0,
+            "speaking_duration": 0,
             "enunciation_percent": 0,
+            "words_per_min": 0,
+            "mood": "",
+            "gender": "",
         },
         "answer": "",
     }
@@ -83,6 +91,17 @@ def add_answer(question_id, answer_file_path):
     updated_question = mongo.db.questions.find_one_and_update(
         selector,
         {"$set": {"answer": get_blob_url(GCS_BUCKET, answer_file_path)}},
+        return_document=ReturnDocument.AFTER,
+    )
+    return serialize_doc(updated_question)
+
+
+def write_stats(question_id, stats):
+    selector = {"_id": ObjectId(question_id)}
+
+    updated_question = mongo.db.questions.find_one_and_update(
+        selector,
+        {"$set": {"stats": stats}},
         return_document=ReturnDocument.AFTER,
     )
     return serialize_doc(updated_question)
