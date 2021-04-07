@@ -1,11 +1,12 @@
 import pytest
-from tests.utils import get_test_app
+from tests.utils import drop_all_collections, get_test_app
 
 
 @pytest.fixture
 def app():
     app = get_test_app()
-    return app
+    yield app
+    drop_all_collections()
 
 
 def test_ping_pong(app):

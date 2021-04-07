@@ -23,5 +23,3 @@ def register_error_handlers(app):
         # )
         response = {"error": "something went wrong", "code": 500}
         return response, 500
-
-    return app

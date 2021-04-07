@@ -79,5 +79,3 @@ def question_routes(app):
             raise NotFoundError()
 
         return {"questions": questions}, 200
-
-    return app

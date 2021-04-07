@@ -9,15 +9,15 @@ services:
         links:
             - server
             - client
+            - flower
         depends_on:
             - server
             - client
+            - flower
         ports:
             - '8000:80'
-        volumes:
-            - ./nginx:/etc/nginx/conf.d
 
-    # mongodb
+    # Mongodb
     db:
         image: mongo
         container_name: db
@@ -26,7 +26,15 @@ services:
         expose:
             - 27017
 
-    # React app
+    # Redis message queue
+    redis_queue:
+        image: redis
+        container_name: redis_queue
+        restart: always
+        expose:
+            - 6379
+
+    # React client
     client:
         container_name: client
         build: ./client
@@ -37,21 +45,62 @@ services:
         expose:
             - 3000
         volumes:
-            - ./client:/app
+            - ./client/src:/app/src
 
-    # Backend
+    # Flask backend
     server:
         build: ./server
         container_name: server
         restart: always
         links:
             - db
+            - redis_queue
         depends_on:
             - db
+            - redis_queue
         environment:
             - GOOGLE_APPLICATION_CREDENTIALS=creds.json
             - MONGO_URI=mongodb://db:27017/db
+            - REDIS_URI=redis://redis_queue:6379/0
         expose:
             - 5000
         volumes:
             - ./server:/app
+
+    # Celery worker
+    worker:
+        build: ./server
+        command: ['celery', '-A', 'worker.celery', 'worker', '-l', 'INFO']
+        container_name: worker
+        restart: always
+        links:
+            - db
+            - redis_queue
+        depends_on:
+            - db
+            - redis_queue
+        environment:
+            - GOOGLE_APPLICATION_CREDENTIALS=creds.json
+            - MONGO_URI=mongodb://db:27017/db
+            - REDIS_URI=redis://redis_queue:6379/0
+
+    # Flower dashboard for celery
+    flower:
+        build: ./server
+        container_name: flower
+        command:
+            [
+                'flower',
+                '--app=worker.celery',
+                '--broker=redis://redis_queue:6379/0',
+                '--url_prefix=flower',
+            ]
+        expose:
+            - 5555
+        environment:
+            - MONGO_URI=mongodb://db:27017/db
+            - REDIS_URI=redis://redis_queue:6379/0
+        depends_on:
+            - client
+            - redis_queue
+            - worker

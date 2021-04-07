@@ -2,7 +2,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 import os
 
-from app import create_app
+from app.factory import create_flask
 from app.mongodb.queries import create_question
 from app.mongodb.utils import serialize_id
 from app.utils.constants import USER_COOKIE_KEY
@@ -11,8 +11,13 @@ mongo = MongoClient(os.getenv("TEST_MONGO_URI"))
 db = mongo["test_db"]
 
 
+def drop_all_collections():
+    db.users.drop()
+    db.questions.drop()
+
+
 def get_test_app():
-    app = create_app(True)
+    app = create_flask(True)
     client = app.test_client()
     return client
 

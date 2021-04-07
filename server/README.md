@@ -13,17 +13,21 @@ $ export GOOGLE_APPLICATION_CREDENTIALS="$PWD/creds.json"
 
 ### Run locally
 
-To run the flask server locally, use the `Makefile` in the `server` folder. Make sure that the `GOOGLE_APPLICATION_CREDENTIALS` env var is set.
+To run the flask server and celery worker locally, use the `Makefile` in the `server` folder. Make sure that the `GOOGLE_APPLICATION_CREDENTIALS` env var is set.
 <br>
 <br>
 Bash Commands: (Tested on Ubuntu 20.04)
 
 ```bash
+# terminal window 1
 $ make init_venv        # Only needed first time, create python virtual env
 $ . env/bin/activate    # Activate python virtual env
 $ make deps             # First time and as needed, install pip packages
-$ make run_mongo        # First time and as needed, run mongodb docker container
-$ make run_local        # Run the actual app
+$ make run_flask        # Provision mongo and redis containers and then run flask app
+
+# terminal window 2
+$ . env/bin/activate    # Activate python virtual env
+$ make run_local        # Run the worker
 ```
 
 To run tests using `pytest`
