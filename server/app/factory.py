@@ -20,8 +20,8 @@ def create_app(type="app", test=False):
     configure_celery(app, tasks.celery)
 
     init_mongo(app)
-    app = register_error_handlers(app)
-    app = register_routes(app)
+    register_error_handlers(app)
+    register_routes(app)
 
     return app if type == "app" else tasks.celery
 

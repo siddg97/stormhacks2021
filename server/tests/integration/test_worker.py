@@ -20,12 +20,11 @@ class TestAddTask:
         assert len(res.json["tasks"]) == 10
 
     @patch("tasks.add.delay")
-    def test_mock_task(self):
+    def test_mock_task(self, mock_run):
         assert add.delay(1, 1)
         add.delay.assert_called_once_with(1, 1)
 
         assert add.delay(1, 2)
-        print(add.delay.calls)
         assert add.delay.call_count == 2
 
         assert add.delay(2, 3)

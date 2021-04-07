@@ -69,5 +69,3 @@ def answer_routes(app):
         )
 
         return {"question": question}, 201
-
-    return app

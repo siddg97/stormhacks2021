@@ -1,5 +1,6 @@
 from app.routes.answer import answer_routes
 from app.routes.questions import question_routes
+from app.routes.results import result_routes
 import tasks
 
 
@@ -10,7 +11,7 @@ def register_routes(app):
         return {"ping": "pong"}, 200
 
     @app.route("/api/test", methods=["GET"])
-    def testt():
+    def test_task():
         task_ids = [None] * 10
         for i in range(10):
             tid = tasks.add.delay(i, 5)
@@ -18,6 +19,6 @@ def register_routes(app):
             app.logger.info("Task[%s] started", tid)
         return {"tasks": task_ids}, 200
 
-    app = question_routes(app)
-    app = answer_routes(app)
-    return app
+    question_routes(app)
+    answer_routes(app)
+    result_routes(app)

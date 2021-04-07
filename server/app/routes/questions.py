@@ -1,16 +1,12 @@
-from app.errors import ForbiddenError, NotFoundError, BadRequestError
+from app.errors import ForbiddenError, NotFoundError
 from app.mongodb.queries import (
     bulk_create_questions,
     create_new_user,
     create_question,
     get_question_by_id,
     get_questions_for_user,
-    write_stats,
 )
-from app.utils.audio import compute_stats
-from app.utils.constants import TMP_DIR, WAV_EXT
 from app.utils.cookies import get_user_cookie, set_user_cookie
-from app.utils.misc import delete_local_file
 
 from flask.ctx import after_this_request
 from flask import request
@@ -83,37 +79,3 @@ def question_routes(app):
             raise NotFoundError()
 
         return {"questions": questions}, 200
-
-    @app.route("/api/questions/<question_id>/test", methods=["GET"])
-    def index(question_id):
-        user_id = get_user_cookie()
-        if not user_id:
-            app.logger.warning(
-                "Revoked unauthorized access to question[%s]", question_id
-            )
-            raise ForbiddenError()
-
-        question = get_question_by_id(question_id)
-        if not question:
-            raise NotFoundError()
-
-        if question["user_id"] != user_id:
-            app.logger.warning(
-                "Revoked unauthorized access to question[%s] by user[%s]",
-                question_id,
-                user_id,
-            )
-            raise ForbiddenError()
-
-        stats = compute_stats(user_id, question["answer"])
-        if not stats:
-            raise BadRequestError()
-
-        question = write_stats(question_id, stats)
-
-        delete_local_file(f"{TMP_DIR}/{question_id}.TextGrid")
-        delete_local_file(f"{TMP_DIR}/{question_id}{WAV_EXT}")
-
-        return {"result": question["stats"]}, 200
-
-    return app
