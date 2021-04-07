@@ -11,10 +11,12 @@ def register_routes(app):
 
     @app.route("/api/test", methods=["GET"])
     def testt():
-        app.logger.info("Request received")
-        tid = tasks.add.apply_async((5, 5))
-        print(tid)
-        return {"tasks": "started"}, 200
+        task_ids = [None] * 10
+        for i in range(10):
+            tid = tasks.add.delay(i, 5)
+            task_ids[i] = tid.id
+            app.logger.info("Task[%s] started", tid)
+        return {"tasks": task_ids}, 200
 
     app = question_routes(app)
     app = answer_routes(app)

@@ -9,13 +9,13 @@ services:
         links:
             - server
             - client
+            - flower
         depends_on:
             - server
             - client
+            - flower
         ports:
             - '8000:80'
-        volumes:
-            - ./nginx:/etc/nginx/conf.d
 
     # Mongodb
     db:
@@ -45,7 +45,7 @@ services:
         expose:
             - 3000
         volumes:
-            - ./client:/app
+            - ./client/src:/app/src
 
     # Flask backend
     server:
@@ -83,3 +83,24 @@ services:
             - GOOGLE_APPLICATION_CREDENTIALS=creds.json
             - MONGO_URI=mongodb://db:27017/db
             - REDIS_URI=redis://redis_queue:6379/0
+
+    # Flower dashboard for celery
+    flower:
+        build: ./server
+        container_name: flower
+        command:
+            [
+                'flower',
+                '--app=worker.celery',
+                '--broker=redis://redis_queue:6379/0',
+                '--url_prefix=flower',
+            ]
+        expose:
+            - 5555
+        environment:
+            - MONGO_URI=mongodb://db:27017/db
+            - REDIS_URI=redis://redis_queue:6379/0
+        depends_on:
+            - client
+            - redis_queue
+            - worker

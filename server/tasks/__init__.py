@@ -10,3 +10,4 @@ def add(self, x, y):
     sleep(5)
     print("woke up")
     print(f"Sum is: {x+y}")
+    return x + y
