@@ -17,7 +17,7 @@ services:
         volumes:
             - ./nginx:/etc/nginx/conf.d
 
-    # mongodb
+    # Mongodb
     db:
         image: mongo
         container_name: db
@@ -26,7 +26,15 @@ services:
         expose:
             - 27017
 
-    # React app
+    # Redis message queue
+    redis_queue:
+        image: redis
+        container_name: redis_queue
+        restart: always
+        expose:
+            - 6379
+
+    # React client
     client:
         container_name: client
         build: ./client
@@ -39,19 +47,39 @@ services:
         volumes:
             - ./client:/app
 
-    # Backend
+    # Flask backend
     server:
         build: ./server
         container_name: server
         restart: always
         links:
             - db
+            - redis_queue
         depends_on:
             - db
+            - redis_queue
         environment:
             - GOOGLE_APPLICATION_CREDENTIALS=creds.json
             - MONGO_URI=mongodb://db:27017/db
+            - REDIS_URI=redis://redis_queue:6379/0
         expose:
             - 5000
         volumes:
             - ./server:/app
+
+    # Celery worker
+    worker:
+        build: ./server
+        command: ['celery', '-A', 'worker.celery', 'worker', '-l', 'INFO']
+        container_name: worker
+        restart: always
+        links:
+            - db
+            - redis_queue
+        depends_on:
+            - db
+            - redis_queue
+        environment:
+            - GOOGLE_APPLICATION_CREDENTIALS=creds.json
+            - MONGO_URI=mongodb://db:27017/db
+            - REDIS_URI=redis://redis_queue:6379/0
