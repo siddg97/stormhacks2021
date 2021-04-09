@@ -1,6 +1,7 @@
 from app.routes.answer import answer_routes
 from app.routes.questions import question_routes
 from app.routes.results import result_routes
+from app.routes.task_status import task_routes
 import tasks
 
 
@@ -22,3 +23,4 @@ def register_routes(app):
     question_routes(app)
     answer_routes(app)
     result_routes(app)
+    task_routes(app)
