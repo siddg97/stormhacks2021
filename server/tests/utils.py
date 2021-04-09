@@ -8,8 +8,16 @@ from app.factory import create_flask
 from app.mongodb.queries import create_question
 from app.mongodb.utils import serialize_id
 from app.utils.constants import USER_COOKIE_KEY
-from app.utils.gcs import delete_file
-from app.utils.constants import GCS_BUCKET, WAV_EXT
+from app.utils.gcs import ( 
+    delete_file, 
+    get_blob_url 
+)
+from app.utils.constants import ( 
+    GCS_BUCKET, 
+    TMP_DIR, 
+    WAV_EXT, 
+    WEBM_EXT 
+) 
 
 mongo = MongoClient(os.getenv("TEST_MONGO_URI"))
 db = mongo["test_db"]
@@ -57,37 +65,50 @@ def build_questions(uid, n=5):
         questions[i] = build_question(f"Question {i+1}", uid)
     return questions
 
+
 def generate_sample_webm(question_id):
     """
     Generate a sample webm file from a question id for testing 
     """
-    # ffmpeg -f lavfi -i "sine=frequency=1000:duration=5" test.webm
     command = [
         "ffmpeg",
         "-f",
         "lavfi",
         "-i",
         "sine=frequency=1000:duration=5",
-        f"{question_id}.webm"
+        f"{TMP_DIR}/{question_id}{WEBM_EXT}"
     ]
     subprocess.run(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
     return retrieve_sample_webm(question_id)
 
+
 def retrieve_sample_webm(question_id):
-    file = f"{question_id}.webm"
+    """
+    Retrieve generated webm sample from question_id
+    """
+    file = f"{TMP_DIR}/{question_id}{WEBM_EXT}"
 
     webm = FileStorage(
         stream=open(file, "rb"),
-        filename=f"{question_id}.webm",
+        filename=f"{question_id}{WEBM_EXT}",
         content_type="video/webm"
     )
     
     return webm
 
+
 def cleanup_webm(uid, question_id):
-    if os.path.exists(f"{question_id}.webm"):
-        os.remove(f"{question_id}.webm")
+    """
+    Remove local .webm file and delete .wav file from GCS bucket
+    """
+    local_path = f"{TMP_DIR}/{question_id}{WEBM_EXT}"
+    if os.path.exists(local_path):
+        os.remove(local_path)
 
     gcs_path = f"{uid}/{question_id}{WAV_EXT}"
     delete_file(GCS_BUCKET, gcs_path)
+
+
+def get_test_blob_url(blob_path):
+    return get_blob_url(GCS_BUCKET, blob_path)
