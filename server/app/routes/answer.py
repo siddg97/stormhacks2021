@@ -10,6 +10,8 @@ from app.utils.constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
 
 from flask import request
 
+from tasks.process_audio import process_audio_stats
+
 
 def answer_routes(app):
     @app.route("/api/questions/<question_id>/answer", methods=["POST"])
@@ -58,6 +60,8 @@ def answer_routes(app):
 
         # add file path to question doc in db
         question = add_answer(question_id, gcs_path)
+        # Trigger task and obtain task id
+        process_task = process_audio_stats.delay(question["answer"])
 
         # cleanup webm and wav file in temp directory
         delete_local_file(webm_file_path)
@@ -68,4 +72,4 @@ def answer_routes(app):
             user_id,
         )
 
-        return {"question": question}, 201
+        return {"question": question, "task_id": process_task.id}, 201

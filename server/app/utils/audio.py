@@ -53,8 +53,8 @@ def get_transcript(uri):
     return transcript, confidence
 
 
-def compute_stats(user_id, uri):
-    if not user_id or not uri:
+def compute_stats(uri):
+    if not uri:
         return None
 
     try:
