@@ -47,11 +47,11 @@ class TestSubmitAnswer:
         """
         uid = str(ObjectId())
         set_test_cookie(app, uid)
-        question = build_question("test question", uid)["_id"]
+        question_id = build_question("test question", uid)["_id"]
 
-        webm = generate_sample_webm(question)
-        
-        res = app.post(f"/api/questions/{question}/answer", data=dict(audio=webm), content_type='multipart/form-data')
+        webm = generate_sample_webm(question_id)
+
+        res = app.post(f"/api/questions/{question_id}/answer", data=dict(audio=webm), content_type='multipart/form-data')
         assert res.status_code == 201
 
-        cleanup_webm(question)
+        cleanup_webm(uid, question_id)

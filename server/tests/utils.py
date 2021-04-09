@@ -8,6 +8,8 @@ from app.factory import create_flask
 from app.mongodb.queries import create_question
 from app.mongodb.utils import serialize_id
 from app.utils.constants import USER_COOKIE_KEY
+from app.utils.gcs import delete_file
+from app.utils.constants import GCS_BUCKET, WAV_EXT
 
 mongo = MongoClient(os.getenv("TEST_MONGO_URI"))
 db = mongo["test_db"]
@@ -83,6 +85,9 @@ def retrieve_sample_webm(question_id):
     
     return webm
 
-def cleanup_webm(question_id):
+def cleanup_webm(uid, question_id):
     if os.path.exists(f"{question_id}.webm"):
         os.remove(f"{question_id}.webm")
+
+    gcs_path = f"{uid}/{question_id}{WAV_EXT}"
+    delete_file(GCS_BUCKET, gcs_path)
