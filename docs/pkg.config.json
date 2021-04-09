@@ -1,6 +1,0 @@
-{
-    "scripts": "src/**/*.js",
-    "assets": "src/swagger.yaml",
-    "targets": ["node14-linux"],
-    "outputPath": "/app/build"
-}
