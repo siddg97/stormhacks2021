@@ -1,6 +1,8 @@
 from bson import ObjectId
 from pymongo import MongoClient
+from werkzeug.datastructures import FileStorage
 import os
+import subprocess
 
 from app.factory import create_flask
 from app.mongodb.queries import create_question
@@ -52,3 +54,35 @@ def build_questions(uid, n=5):
     for i in range(n):
         questions[i] = build_question(f"Question {i+1}", uid)
     return questions
+
+def generate_sample_webm(question_id):
+    """
+    Generate a sample webm file from a question id for testing 
+    """
+    # ffmpeg -f lavfi -i "sine=frequency=1000:duration=5" test.webm
+    command = [
+        "ffmpeg",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=1000:duration=5",
+        f"{question_id}.webm"
+    ]
+    subprocess.run(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+
+    return retrieve_sample_webm(question_id)
+
+def retrieve_sample_webm(question_id):
+    file = f"{question_id}.webm"
+
+    webm = FileStorage(
+        stream=open(file, "rb"),
+        filename=f"{question_id}.webm",
+        content_type="video/webm"
+    )
+    
+    return webm
+
+def cleanup_webm(question_id):
+    if os.path.exists(f"{question_id}.webm"):
+        os.remove(f"{question_id}.webm")

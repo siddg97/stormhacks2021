@@ -40,21 +40,21 @@ def answer_routes(app):
         webm_file.save(webm_file_path)
 
         # convert webm file to wav
-        convert_to_wav(file_path)
         app.logger.info(
-            "Coverting answer .webm for question[%s] by user[%s] to .wav file",
+            "Converting answer .webm for question[%s] by user[%s] to .wav file",
             question_id,
             user_id,
         )
+        convert_to_wav(file_path)
 
         # upload to bucket
-        upload_file(GCS_BUCKET, gcs_path, wav_file_path)
         app.logger.info(
             "Uploaded answer .wav for question[%s] by user[%s] to %s",
             question_id,
             user_id,
             get_blob_url(GCS_BUCKET, gcs_path),
         )
+        upload_file(GCS_BUCKET, gcs_path, wav_file_path)
 
         # add file path to question doc in db
         question = add_answer(question_id, gcs_path)
