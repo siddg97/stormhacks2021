@@ -111,4 +111,7 @@ def cleanup_webm(uid, question_id):
 
 
 def get_test_blob_url(blob_path):
+    """
+    Retrieve blob url using test question data and path
+    """
     return get_blob_url(GCS_BUCKET, blob_path)
