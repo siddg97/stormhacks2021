@@ -10,13 +10,21 @@ services:
             - server
             - client
             - flower
+            - docs
         depends_on:
             - server
             - client
             - flower
+            - docs
         ports:
             - '8000:80'
-
+    # Swagger API spec
+    docs:
+        build: ./docs
+        container_name: docs
+        restart: always
+        expose:
+            - 3000
     # Mongodb
     db:
         image: mongo
