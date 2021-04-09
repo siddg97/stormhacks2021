@@ -1,0 +1,219 @@
+openapi: 3.0.0
+info:
+  title: Server API Docs
+  description: Endpoints for performing various tasks on the Interview Buddy backend
+  version: 1.0.0
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http # FIXME this must be https
+host: localhost:8000/api
+
+paths:
+
+  /ping:
+    get:
+      tags:
+        - checks
+      operationId: isRunning
+      responses:
+        '204':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PingResponse"
+          description: Ping server
+
+  /questions:
+    post:
+      security: []
+      tags:
+        - questions
+      operationId: saveQuestions
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/components/schemas/CreateQuestions"
+      responses:
+        '201':
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: IB_USER_ID=507f191e810c19729de860ea; Path=/; HttpOnly
+          description: Questions were saved under an anonymous user. Either existing user or a new one is made
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateQuestionsResponse"
+    get:
+      tags:
+        - questions
+      operationId: getQuestions
+      responses:
+        '200':
+          description: All question documents belonging to the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetQuestionsResponse"
+        '401':
+          description: No user cookie found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+  /questions/{question_id}:
+    get:
+      tags:
+        - questions
+      operationId: getQuestion
+      parameters:
+        - name: questions_id
+          in: path
+          type: string
+          example: 507f191e810c19729de860ea
+      responses:
+        '200':
+          description: Question document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetQuestionResponse"
+        '404':
+          description: Questions with the requested id does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        '401':
+          description: User does not own the question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+
+security:
+  - cookieAuth: []
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: string
+      in: cookie
+      name: IB_USER_ID
+  schemas:
+    PingResponse:
+      type: object
+      properties:
+        ping:
+          type: string
+          default: pong
+    CreateQuestions:
+      type: object
+      required:
+        - questions
+      properties:
+        questions:
+          type: array
+          items:
+            type: string
+          example: ["Why do you want to work for our company?", "Why do you think you are a good candidate for this position?"]
+    CreateQuestionsResponse:
+      type: object
+      required:
+        - questions
+      properties:
+        questions:
+          type: array
+          items:
+            type: string
+          example: ["507f191e810c19729de860ea","507f191e810c19729de860eb"]
+    GetQuestionsResponse:
+      type: object
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionDoc"
+    GetQuestionResponse:
+      type: object
+      properties:
+        question:
+          $ref: "#/components/schemas/QuestionDoc"
+    QuestionDoc:
+      type: object
+      properties:
+        description:
+          type: string
+          example: "Why do you want to work for our company?"
+        user_id:
+          type: string
+          example: "9a7f191e810c19729de860ea"
+        created_on:
+          type: date-time
+          example: 2020-01-07T10:40:52Z
+        stats:
+          $ref: "#/components/schemas/Stats"
+        answer:
+          type: string
+          example: "gcs://gcp-project/user_id/question_id.wav"
+    Stats:
+      type: object
+      properties:
+        articulation_rate:
+          type: number
+          example: 4.0
+        accuracy:
+          type: number
+          example: 0.9458
+        number_of_pauses:
+          type: number
+          example: 13.0
+        number_of_syllables:
+          type: number
+          example: 82.0
+        original_duration:
+          type: number
+          example: 45.1
+        speaking_duration:
+          type: number
+          example: 22.1
+        words_per_min:
+          type: number
+          example: 109
+        mood:
+          type: string
+          enum:
+            - passionate
+            - normal
+            - reading
+          example: "reading"
+        gender:
+          type: string
+          enum:
+            - "male"
+            - "female"
+          example: "female"
+    ForbiddenError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        description:
+          type: string
+          example: forbidden, unauthorized
+    NotFoundError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        description:
+          type: string
+          example: resource not found
