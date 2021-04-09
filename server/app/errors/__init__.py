@@ -14,4 +14,4 @@ class NotFoundError(HttpError):
 
 class ForbiddenError(HttpError):
     code = 401
-    description = "fordidden, unauthorized"
+    description = "forbidden, unauthorized"

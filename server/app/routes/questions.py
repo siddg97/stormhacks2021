@@ -36,6 +36,23 @@ def question_routes(app):
 
         return {"questions": question_ids}, 201
 
+    @app.route("/api/questions", methods=["GET"])
+    def get_user_questions():
+        """
+        GET /api/questions
+        Fetch questions for the current user if cookie is found, else return a 404
+        """
+        user_id = get_user_cookie()
+        if not user_id:
+            app.logger.warning("Revoked unauthorized access to GET /api/questions")
+            raise ForbiddenError()
+
+        questions = get_questions_for_user(user_id)
+        if not questions:
+            raise NotFoundError()
+
+        return {"questions": questions}, 200
+
     @app.route("/api/questions/<question_id>", methods=["GET"])
     def get_question(question_id):
         """
@@ -62,20 +79,3 @@ def question_routes(app):
             raise ForbiddenError()
 
         return {"question": question}, 200
-
-    @app.route("/api/questions", methods=["GET"])
-    def get_user_questions():
-        """
-        GET /api/questions
-        Fetch questions for the current user if cookie is found, else return a 404
-        """
-        user_id = get_user_cookie()
-        if not user_id:
-            app.logger.warning("Revoked unauthorized access to GET /api/questions")
-            raise ForbiddenError()
-
-        questions = get_questions_for_user(user_id)
-        if not questions:
-            raise NotFoundError()
-
-        return {"questions": questions}, 200

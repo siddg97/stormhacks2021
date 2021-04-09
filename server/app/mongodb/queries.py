@@ -55,15 +55,25 @@ def create_question(description, user_id):
         "user_id": user_id,
         "created_on": now(),
         "stats": {
-            "articulation_rate": 0,
-            "accuracy": 0,
-            "number_of_pauses": 0,
+            # total number of syllables
             "number_of_syllables": 0,
-            "original_duration": 0,
+            # pauses throughout audio file
+            "number_of_pauses": 0,
+            # syllables/sec (original duration of audio file)
+            "rate_of_speech": 0,
+            # syllables/sec (speaking duration of audio file)
+            "articulation_rate": 0,
+            # seconds of audio with speech
             "speaking_duration": 0,
-            "enunciation_percent": 0,
+            # Total duration of audio file
+            "original_duration": 0,
+            # (speaking duration)/(original duration)
+            "balance": 0,
+            # words/min
             "words_per_min": 0,
+            # mood
             "mood": "",
+            # gender
             "gender": "",
         },
         "answer": "",
