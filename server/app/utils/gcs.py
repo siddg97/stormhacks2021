@@ -29,6 +29,18 @@ def upload_file(bucket_name, blob, destination):
     blob.upload_from_filename(destination)
 
 
+def delete_file(bucket_name, blob):
+    """
+    Delete a file on the google cloud storage bucket
+
+    @param: bucket_name - Name of GCS bucket
+    @param: blob        - Name of blob to be deleted from GCS bucket
+    """
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob)
+    blob.delete()
+
 def get_blob_url(bucket, blob_path):
     return f"gs://{bucket}/{blob_path}"
 
