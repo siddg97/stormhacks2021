@@ -8,6 +8,7 @@ from app.factory import create_flask
 from app.mongodb.queries import create_question
 from app.mongodb.utils import serialize_id
 from app.utils.constants import USER_COOKIE_KEY
+from app.utils.misc import delete_local_file
 from app.utils.gcs import ( 
     delete_file, 
     get_blob_url 
@@ -104,7 +105,7 @@ def cleanup_webm(uid, question_id):
     """
     local_path = f"{TMP_DIR}/{question_id}{WEBM_EXT}"
     if os.path.exists(local_path):
-        os.remove(local_path)
+        delete_local_file(local_path)
 
     gcs_path = f"{uid}/{question_id}{WAV_EXT}"
     delete_file(GCS_BUCKET, gcs_path)
