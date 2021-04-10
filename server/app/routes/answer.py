@@ -49,7 +49,7 @@ def answer_routes(app):
 
         # upload to bucket
         app.logger.info(
-            "Uploaded answer .wav for question[%s] by user[%s] to %s",
+            "Uploading answer .wav for question[%s] by user[%s] to %s",
             question_id,
             user_id,
             get_blob_url(GCS_BUCKET, gcs_path),
