@@ -12,6 +12,5 @@ def app():
 def test_ping_pong(app):
     """GET /api/ping returns 200"""
     res = app.get("/api/ping")
-
     assert res.status_code == 200
-    assert res.json == {"ping": "pong"}
+    assert res.json.get("ping") == "pong"

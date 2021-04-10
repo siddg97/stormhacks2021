@@ -1,11 +1,20 @@
+from app.errors import ForbiddenError, NotFoundError
+from app.utils.cookies import get_user_cookie
 from tasks.process_audio import process_audio_stats
 
 
 def task_routes(app):
     @app.route("/api/tasks/<task_id>/status", methods=["GET"])
     def get_task_status(task_id):
+        user_id = get_user_cookie()
+        if not user_id:
+            raise ForbiddenError()
+
         task = process_audio_stats.AsyncResult(task_id)
-        response = {"state": task.state}
+        if not task:
+            raise NotFoundError()
+
+        response = {"state": task.state, "result": {}}
 
         if task.state == "PENDING":
             response["current"] = 0

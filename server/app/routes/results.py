@@ -8,8 +8,8 @@ from app.utils.cookies import get_user_cookie
 
 
 def result_routes(app):
-    @app.route("/api/results/<question_id>", methods=["GET"])
-    def get_stats_question(question_id):
+    @app.route("/api/questions/<question_id>/results", methods=["GET"])
+    def get_results_question(question_id):
         user_id = get_user_cookie()
         if not user_id:
             app.logger.warning(
@@ -30,8 +30,8 @@ def result_routes(app):
             raise ForbiddenError()
         return {"result": question["stats"]}, 200
 
-    @app.route("/api/results", methods=["GET"])
-    def get_stats_user():
+    @app.route("/api/questions/results", methods=["GET"])
+    def get_results_user():
         user_id = get_user_cookie()
         if not user_id:
             raise ForbiddenError()
@@ -52,7 +52,7 @@ def result_routes(app):
             wpm += int(each["words_per_min"])
 
         return {
-            "stats": {
+            "results": {
                 "words_per_minute": {"total": wpm, "avg": wpm / len(aggd)},
                 "number_of_pauses": {
                     "total": num_pauses,

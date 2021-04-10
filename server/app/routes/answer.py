@@ -29,7 +29,6 @@ def answer_routes(app):
         if webm_file.filename.split(".")[1] != "webm":
             raise BadRequestError()
 
-        # Save webm file to convert
         blob_name = question_id
         file_path = f"{TMP_DIR}/{blob_name}"
         wav_file_path = f"{file_path}{WAV_EXT}"
@@ -61,8 +60,10 @@ def answer_routes(app):
         # add file path to question doc in db
         question = add_answer(question_id, gcs_path)
         # Trigger task and obtain task id
+
         process_task = process_audio_stats.delay(question["answer"])
         task_id = process_task.id
+        app.logger.info("Triggered processing stats task[%s]", task_id)
 
         # cleanup webm and wav file in temp directory
         delete_local_file(webm_file_path)
@@ -76,5 +77,5 @@ def answer_routes(app):
         return {
             "question": question,
             "task_id": task_id,
-            "url": url_for("get_task_status", task_id=task_id),
+            "poll_url": url_for("get_task_status", task_id=task_id),
         }, 201

@@ -9,13 +9,10 @@ from tests.utils import (
     build_question,
     generate_sample_webm,
     cleanup_webm,
-    get_test_blob_url
+    get_test_blob_url,
 )
-from app.utils.constants import ( 
-    TMP_DIR, 
-    WAV_EXT, 
-    WEBM_EXT 
-) 
+from app.utils.constants import TMP_DIR, WAV_EXT, WEBM_EXT
+
 
 @pytest.fixture
 def app():
@@ -37,10 +34,14 @@ class TestSubmitAnswer:
         uid = str(ObjectId())
         set_test_cookie(app, uid)
 
-        file = dict(audio=(io.BytesIO(str.encode(uid)), 'test.txt'))
-        res = app.post(f"/api/questions/{str(ObjectId())}/answer", data=file, content_type='multipart/form-data')
+        file = dict(audio=(io.BytesIO(str.encode(uid)), "test.txt"))
+        res = app.post(
+            f"/api/questions/{str(ObjectId())}/answer",
+            data=file,
+            content_type="multipart/form-data",
+        )
         assert res.status_code == 400
-    
+
     def test_submit_answer_401(self, app):
         """
         POST /api/questions/<question_id>/answer: accessing endpoint without user permission
@@ -59,9 +60,13 @@ class TestSubmitAnswer:
         webm_path = f"{TMP_DIR}/{question_id}{WEBM_EXT}"
         webm = generate_sample_webm(question_id)
         assert webm
-        assert os.path.exists(webm_path) is True
+        assert os.path.exists(webm_path)
 
-        res = app.post(f"/api/questions/{question_id}/answer", data=dict(audio=webm), content_type='multipart/form-data')
+        res = app.post(
+            f"/api/questions/{question_id}/answer",
+            data=dict(audio=webm),
+            content_type="multipart/form-data",
+        )
         assert res.status_code == 201
 
         question_response = res.json.get("question")
