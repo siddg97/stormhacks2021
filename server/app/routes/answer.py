@@ -1,4 +1,4 @@
-from app.errors import BadRequestError, ForbiddenError
+from app.errors import BadRequestError
 from app.mongodb.queries import (
     add_answer,
 )
@@ -8,7 +8,9 @@ from app.utils.gcs import get_blob_url, upload_file
 from app.utils.audio import convert_to_wav
 from app.utils.constants import GCS_BUCKET, TMP_DIR, WEBM_EXT, WAV_EXT
 
-from flask import request
+from flask import request, url_for
+
+from tasks.process_audio import process_audio_stats
 
 
 def answer_routes(app):
@@ -18,16 +20,13 @@ def answer_routes(app):
         1. Extract webm audio file and convert to wav file
         2. Upload to a the users folder in cloud storage with name as question id
         """
-        user_id = get_user_cookie()
-        if not user_id:
-            raise ForbiddenError()
+        user_id = get_user_cookie(True)
 
         # Extract file and sanity check
         webm_file = request.files["audio"]
         if webm_file.filename.split(".")[1] != "webm":
             raise BadRequestError()
 
-        # Save webm file to convert
         blob_name = question_id
         file_path = f"{TMP_DIR}/{blob_name}"
         wav_file_path = f"{file_path}{WAV_EXT}"
@@ -58,6 +57,11 @@ def answer_routes(app):
 
         # add file path to question doc in db
         question = add_answer(question_id, gcs_path)
+        # Trigger task and obtain task id
+
+        process_task = process_audio_stats.delay(question["answer"])
+        task_id = process_task.id
+        app.logger.info("Triggered processing stats task[%s]", task_id)
 
         # cleanup webm and wav file in temp directory
         delete_local_file(webm_file_path)
@@ -68,4 +72,8 @@ def answer_routes(app):
             user_id,
         )
 
-        return {"question": question}, 201
+        return {
+            "question": question,
+            "task_id": task_id,
+            "poll_url": url_for("get_task_status", task_id=task_id),
+        }, 201

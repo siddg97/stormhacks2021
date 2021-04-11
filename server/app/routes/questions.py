@@ -42,10 +42,7 @@ def question_routes(app):
         GET /api/questions
         Fetch questions for the current user if cookie is found, else return a 404
         """
-        user_id = get_user_cookie()
-        if not user_id:
-            app.logger.warning("Revoked unauthorized access to GET /api/questions")
-            raise ForbiddenError()
+        user_id = get_user_cookie(True)
 
         questions = get_questions_for_user(user_id)
         if not questions:
@@ -59,12 +56,7 @@ def question_routes(app):
         GET /api/questions/<question_id>
         Fetch information about a specific question matching question_id, else return a 404
         """
-        user_id = get_user_cookie()
-        if not user_id:
-            app.logger.warning(
-                "Revoked unauthorized access to question[%s]", question_id
-            )
-            raise ForbiddenError()
+        user_id = get_user_cookie(True)
 
         question = get_question_by_id(question_id)
         if not question:

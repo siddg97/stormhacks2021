@@ -55,6 +55,8 @@ def create_question(description, user_id):
         "user_id": user_id,
         "created_on": now(),
         "stats": {
+            # accuracy of transcript AI model
+            "accuracy": 0,
             # total number of syllables
             "number_of_syllables": 0,
             # pauses throughout audio file

@@ -13,31 +13,44 @@ host: localhost:8000/api
 
 paths:
 
-  /ping:
+  /api/ping:
     get:
+      description: Ping server to check if its ready to serve requests
       tags:
-        - checks
+        - Checks
       operationId: isRunning
       responses:
-        '204':
+        '200':
+          description: Server is ready to serve requests
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PingResponse"
-          description: Ping server
-
-  /questions:
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+  /api/questions:
     post:
       security: []
+      description: Create questions for a user. If cookie with user ID is received, questions will be saved for that user, else a new user is made and a cookie is sent back to the client
       tags:
-        - questions
+        - Questions
       operationId: saveQuestions
       parameters:
-        - name: body
-          in: body
-          required: true
+        - name: IB_USER_ID
+          in: cookie
           schema:
-            $ref: "#/components/schemas/CreateQuestions"
+            type: string
+            example: 60711da216252e4b17c9357f
+      requestBody:
+        description: List of questions to practice for a user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuestions"
       responses:
         '201':
           headers:
@@ -50,10 +63,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateQuestionsResponse"
+        '500':
+          description: Server had some error and was not able to process the request. Try again in some time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
     get:
+      description: Retrieve all questions belonging to a user
       tags:
-        - questions
+        - Questions
       operationId: getQuestions
+      parameters:
+        - name: IB_USER_ID
+          required: true
+          in: cookie
+          schema:
+            type: string
+            example: 60711da216252e4b17c9357f
       responses:
         '200':
           description: All question documents belonging to the user
@@ -67,12 +94,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenError"
-  /questions/{question_id}:
+        '500':
+          description: Server had some error and was not able to process the request. Try again in some time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+  /api/questions/{question_id}:
     get:
       tags:
-        - questions
+        - Questions
       operationId: getQuestion
       parameters:
+        - name: IB_USER_ID
+          required: true
+          in: cookie
+          schema:
+            type: string
+            example: 60711da216252e4b17c9357f
         - name: questions_id
           in: path
           type: string
@@ -91,12 +130,162 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
         '401':
-          description: User does not own the question
+          description: User does not own the question or no cookie with user ID found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenError"
-
+        '500':
+          description: Server had some error and was not able to process the request. Try again in some time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+  /api/questions/{question_id}/answer:
+    post:
+      description: Submit recorded voice as answer for a question. Returns a task ID and a polling url for checking status of the task
+      tags:
+        - Answers
+      operationId: submitAnswer
+      parameters:
+        - name: IB_USER_ID
+          in: cookie
+          required: true
+          schema:
+            type: string
+            example: 60711da216252e4b17c9357f
+        - name: questions_id
+          in: path
+          type: string
+          example: 507f191e810c19729de860ea
+      requestBody:
+        description: .webm audio file for the recorded answer associated with the question
+        required: true
+        content:
+          form-data:
+            schema:
+              type: object
+              properties:
+                audio:
+                  type: string
+                  format: binary
+                name:
+                  type: string
+                  example: audio
+  /api/questions/results:
+    get:
+      description: Get the aggregated results for all answers submitted for questions belonging to users
+      tags:
+        - Results
+      operationId: getResultsAllQuestions
+      parameters:
+        - name: IB_USER_ID
+          in: cookie
+          schema:
+            type: string
+            example: 60711da216252e4b17c9357f
+      responses:
+        '200':
+          description: Aggregated results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AggdResultsResponse"
+        '401':
+          description: User does not own the question or no cookie with user ID found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        '404':
+          description: No questions for the user ID provided exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        '500':
+          description: Server had some error and was not able to process the request. Try again in some time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+  /api/questions/<question_id>/results:
+    get:
+      description: Get results for a specific question
+      tags:
+        - Results
+      operationId: getResultsQuestion
+      parameters:
+        - name: IB_USER_ID
+          in: cookie
+          schema:
+            type: string
+            example: 60711da216252e4b17c9357f
+        - name: questions_id
+          in: path
+          type: string
+          example: 507f191e810c19729de860ea
+      responses:
+        '200':
+          description: Results for the answer submitted for the question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResultsResponse"
+        '401':
+          description: User does not own the question or no cookie with user ID found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        '404':
+          description: No questions for the user ID provided exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        '500':
+          description: Server had some error and was not able to process the request. Try again in some time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
+  /api/tasks/{task_id}/status:
+    get:
+      description:
+      tags:
+        - Tasks
+      operationId: getTaskStatus
+      parameters:
+        - name: task_id
+          in: path
+          type: string
+          example: 41bdc66e-4fe5-43b2-a73e-c8873415614a
+      responses:
+        '200':
+          description: Task status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskStatusResponse"
+        '401':
+          description: No user ID found in cookie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
+        '404':
+          description: No task with provided task ID found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        '500':
+          description: Server had some error and was not able to process the request. Try again in some time
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InternalServerError"
 security:
   - cookieAuth: []
 
@@ -107,6 +296,33 @@ components:
       in: cookie
       name: IB_USER_ID
   schemas:
+    TaskStatusResponse:
+      type: object
+      properties:
+        state:
+          type: object
+          properties:
+            current:
+              type: integer
+              example: 50
+            total:
+              type: integer
+              example: 100
+            state:
+              type: string
+              enum:
+                - PENDING
+                - SUCCESS
+                - FAILURE
+                - PROGRESS
+              example: PROGRESS
+            status:
+              type: string
+              example: "Processing audio"
+            result:
+              oneOf:
+                - $ref: "#/components/schemas/EmptyObject"
+                - $ref: "#/components/schemas/Stats"
     PingResponse:
       type: object
       properties:
@@ -114,15 +330,10 @@ components:
           type: string
           default: pong
     CreateQuestions:
-      type: object
-      required:
-        - questions
-      properties:
-        questions:
-          type: array
-          items:
-            type: string
-          example: ["Why do you want to work for our company?", "Why do you think you are a good candidate for this position?"]
+        type: array
+        items:
+          type: string
+        example: ["Why do you want to work for our company?", "Why do you think you are a good candidate for this position?"]
     CreateQuestionsResponse:
       type: object
       required:
@@ -145,6 +356,25 @@ components:
       properties:
         question:
           $ref: "#/components/schemas/QuestionDoc"
+    SubmitAnswerResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+          example: 41bdc66e-4fe5-43b2-a73e-c8873415614a
+        poll_url:
+          type: string
+          example: /api/tasks/41bdc66e-4fe5-43b2-a73e-c8873415614a/status
+    AggdResultsResponse:
+      type: object
+      properties:
+        results:
+          $ref: "#/components/schemas/AggdStats"
+    ResultsResponse:
+      type: object
+      properties:
+        result:
+          $ref: "#/components/schemas/Stats"
     QuestionDoc:
       type: object
       properties:
@@ -162,6 +392,27 @@ components:
         answer:
           type: string
           example: "gcs://gcp-project/user_id/question_id.wav"
+    AggdStats:
+      type: object
+      properties:
+        words_per_minute:
+          type: object
+          properties:
+            total:
+              type: number
+              example: 111.5
+            avg:
+              type: number
+              example: 223.0
+        number_of_pauses:
+          type: object
+          properties:
+            total:
+              type: number
+              example: 14.0
+            avg:
+              type: number
+              example: 28.0
     Stats:
       type: object
       properties:
@@ -171,12 +422,19 @@ components:
         accuracy:
           type: number
           example: 0.9458
+          min: 0
+          max: 1
         number_of_pauses:
           type: number
           example: 13.0
         number_of_syllables:
           type: number
           example: 82.0
+        balance:
+          type: number
+          example: 0.645
+          min: 0
+          max: 1
         original_duration:
           type: number
           example: 45.1
@@ -217,3 +475,23 @@ components:
         description:
           type: string
           example: resource not found
+    BadRequestError:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 400
+        description:
+          type: string
+          example: bad request
+    InternalServerError:
+      type: object
+      properties:
+        code:
+          type: string
+          example: 500
+        description:
+          type: string
+          example: something went wrong
+    EmptyObject:
+      type: object

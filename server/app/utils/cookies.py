@@ -1,15 +1,17 @@
-from flask import request, Response
-
+from flask import request
+from app.errors import ForbiddenError
 from app.utils.constants import USER_COOKIE_KEY
 
 
-def get_user_cookie():
+def get_user_cookie(throw=None):
     """
     Parses user id cookie for a request
 
     @returns: user id for mongo doc if found else None
     """
     user_id = request.cookies.get(USER_COOKIE_KEY)
+    if not user_id and throw:
+        raise ForbiddenError()
     return user_id
 
 
