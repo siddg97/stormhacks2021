@@ -1,6 +1,6 @@
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
-export const GlobalStyle = createGlobalStyle`
+export default createGlobalStyle`
   html {
     --color-primary: #3C64B1;
     --color-text: #737B7D;
@@ -32,20 +32,19 @@ export const GlobalStyle = createGlobalStyle`
   a:hover {
     text-decoration: underline;
   }
-`;
 
-export const StyledButton = styled.button`
-  background-color: var(--color-primary);
-  color: white;
-  font-family: var(--font-text);
-  font-weight: bold;
-  text-align: center;
-  letter-spacing: 0.3px;
-  border-radius: 3px;
-  padding: 12px 30px;
-  border: none;
+  button {
+    background-color: var(--color-primary);
+    color: white;
+    font-family: var(--font-text);
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 0.3px;
+    border-radius: 3px;
+    padding: 12px 30px;
+    border: none;
 
-  &:hover {
+    &:hover {
     opacity: 0.85;
     transition: opacity 0.1s linear;
   }

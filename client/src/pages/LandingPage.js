@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import About from '../new-components/About';
 import { routes } from '../constants';
 import { ReactComponent as Logo } from '../logoWithTitle.svg';
-import { StyledButton } from '../styles';
 
 const Div = styled.div`
   display: flex;
@@ -22,7 +21,7 @@ const AboutDiv = styled.div`
   padding: 30px 0;
 `;
 
-const Button = styled(StyledButton)`
+const Button = styled.button`
   width: 100%;
   margin: 10px 0;
 `;

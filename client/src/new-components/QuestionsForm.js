@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { StyledButton as Button } from '../styles';
 
 const Label = styled.label`
   color: var(--color-primary);
@@ -28,13 +27,13 @@ const QuestionDiv = styled.div`
   display: flex;
 `;
 
-const StyledButton = styled(Button)`
+const Button = styled.button`
   margin: 30px auto 0 auto;
   display: block;
 `;
 
 const QuestionsForm = ({ handleSubmit }) => {
-  const NUM_QUESTIONS = 5;
+  const NUM_QUESTIONS = 1;
 
   const [questions, _] = useState([...Array(NUM_QUESTIONS).fill('')]);
   const [emptyInputs, setEmptyInputs] = useState(new Set());
@@ -50,7 +49,7 @@ const QuestionsForm = ({ handleSubmit }) => {
     event.preventDefault();
 
     const invalidInputs = getEmptyInputs();
-    if (!invalidInputs) {
+    if (invalidInputs.size === 0) {
       handleSubmit(questions);
     } else {
       setEmptyInputs(invalidInputs);
@@ -76,7 +75,7 @@ const QuestionsForm = ({ handleSubmit }) => {
           </QuestionDiv>
         ))}
       </Form>
-      <StyledButton onClick={submit} form="questions">Let's Practice!</StyledButton>
+      <Button onClick={submit} form="questions">Let's Practice!</Button>
     </div>
   );
 };
