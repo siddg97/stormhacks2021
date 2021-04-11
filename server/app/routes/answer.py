@@ -1,4 +1,4 @@
-from app.errors import BadRequestError, ForbiddenError
+from app.errors import BadRequestError
 from app.mongodb.queries import (
     add_answer,
 )

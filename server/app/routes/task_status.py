@@ -1,4 +1,4 @@
-from app.errors import ForbiddenError, NotFoundError
+from app.errors import NotFoundError
 from app.utils.cookies import get_user_cookie
 from tasks.process_audio import process_audio_stats
 
