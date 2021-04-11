@@ -14,12 +14,12 @@ def register_error_handlers(app):
     @app.errorhandler(Exception)
     def something_went_wrong(err):
         app.logger.error(f"Unhandled Exception: {str(err)}")
-        # app.logger.debug(
-        #     "".join(
-        #         traceback.format_exception(
-        #             etype=type(err), value=err, tb=err.__traceback__
-        #         )
-        #     )
-        # )
+        app.logger.debug(
+            "".join(
+                traceback.format_exception(
+                    etype=type(err), value=err, tb=err.__traceback__
+                )
+            )
+        )
         response = {"error": "something went wrong", "code": 500}
         return response, 500

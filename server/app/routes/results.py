@@ -10,12 +10,7 @@ from app.utils.cookies import get_user_cookie
 def result_routes(app):
     @app.route("/api/questions/<question_id>/results", methods=["GET"])
     def get_results_question(question_id):
-        user_id = get_user_cookie()
-        if not user_id:
-            app.logger.warning(
-                "Revoked unauthorized access to question[%s]", question_id
-            )
-            raise ForbiddenError()
+        user_id = get_user_cookie(True)
 
         question = get_question_by_id(question_id)
         if not question:

@@ -6,9 +6,7 @@ from tasks.process_audio import process_audio_stats
 def task_routes(app):
     @app.route("/api/tasks/<task_id>/status", methods=["GET"])
     def get_task_status(task_id):
-        user_id = get_user_cookie()
-        if not user_id:
-            raise ForbiddenError()
+        get_user_cookie(True)
 
         task = process_audio_stats.AsyncResult(task_id)
         if not task:

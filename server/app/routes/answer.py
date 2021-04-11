@@ -20,9 +20,7 @@ def answer_routes(app):
         1. Extract webm audio file and convert to wav file
         2. Upload to a the users folder in cloud storage with name as question id
         """
-        user_id = get_user_cookie()
-        if not user_id:
-            raise ForbiddenError()
+        user_id = get_user_cookie(True)
 
         # Extract file and sanity check
         webm_file = request.files["audio"]
