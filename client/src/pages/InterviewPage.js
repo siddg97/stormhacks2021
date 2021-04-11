@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import Question from '../new-components/Question';
+import { routes } from '../constants';
 
 const InterviewPage = () => {
+  const history = useHistory();
   const { questions } = useLocation().state;
 
   const [idx, setIdx] = useState(0);
@@ -21,6 +23,7 @@ const InterviewPage = () => {
       setIdx(idx + 1);
     } else {
       console.log('interview done');
+      history.push(routes.RESULTS);
     }
   };
 

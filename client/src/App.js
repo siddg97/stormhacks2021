@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import InterviewPage from './pages/InterviewPage';
 import SelectQuestionPage from './pages/SelectQuestionPage';
+import ResultsPage from './pages/ResultsPage';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { useEffect, useState } from 'react';
@@ -49,6 +50,9 @@ function App() {
                         <Switch>
                             <Route path={routes.INTERVIEW}>
                                 <InterviewPage />
+                            </Route>
+                            <Route path={routes.RESULTS}>
+                                <ResultsPage />
                             </Route>
                             <Route path={routes.SELECT_QUESTIONS}>
                                 <SelectQuestionPage />

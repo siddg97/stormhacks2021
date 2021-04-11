@@ -1,6 +1,7 @@
 export const routes = Object.freeze({
   SELECT_QUESTIONS: '/questions',
   INTERVIEW: '/interview',
+  RESULTS: '/results',
 });
 
 export const SELECT_QUESTIONS_INSTRUCTIONS = `First, input the 5 questions you want InterviewBuddy to ask you.
