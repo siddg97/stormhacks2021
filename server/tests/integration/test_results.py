@@ -7,6 +7,7 @@ from tests.utils.test_app import (
     set_test_cookie
 )
 from tests.utils.test_factory import (
+    new_id,
     build_question,
     build_questions,
     seed_questions_with_sample_results
@@ -30,7 +31,7 @@ class TestGetResultsByQuestionId:
         """
         GET /api/questions/<question_id>/results: accessing endpoint without valid user cookie
         """
-        res = app.get(f"/api/questions/{str(ObjectId())}/results")
+        res = app.get(f"/api/questions/{new_id()}/results")
         assert res.status_code == 401
 
     def test_get_results_404(self, app):
@@ -39,7 +40,7 @@ class TestGetResultsByQuestionId:
         """
         uid = set_test_cookie(app)
 
-        res = app.get(f"/api/questions/{str(ObjectId())}/results")
+        res = app.get(f"/api/questions/{new_id()}/results")
         assert res.status_code == 404
 
     def test_get_results_200(self, app):

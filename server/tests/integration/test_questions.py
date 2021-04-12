@@ -12,8 +12,9 @@ from tests.utils.test_db import (
     find_question_by_id 
 )
 from tests.utils.test_factory import (
+    new_id,
     build_question,
-    build_questions,
+    build_questions
 )
 
 
@@ -63,13 +64,13 @@ class TestAddQuestions:
 
 class TestGetQuestion:
     def test_get_question_401(self, app):
-        res = app.get(f"/api/questions/{str(ObjectId())}")
+        res = app.get(f"/api/questions/{new_id()}")
         assert res.status_code == 401
 
     def test_get_question_404(self, app):
         uid = set_test_cookie(app)
 
-        res = app.get(f"/api/questions/{str(ObjectId())}")
+        res = app.get(f"/api/questions/{new_id()}")
         assert res.status_code == 404
 
     def test_get_question_200(self, app):

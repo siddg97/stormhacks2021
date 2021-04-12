@@ -7,7 +7,10 @@ from app.utils.constants import TMP_DIR, WAV_EXT, WEBM_EXT
 
 from tests.utils.test_gcs import get_test_blob_url
 from tests.utils.test_db import drop_all_collections
-from tests.utils.test_factory import build_question
+from tests.utils.test_factory import (
+    new_id,
+    build_question
+)
 from tests.utils.test_app import (
     get_test_app, 
     set_test_cookie
@@ -38,7 +41,7 @@ class TestSubmitAnswer:
 
         file = dict(audio=(io.BytesIO(str.encode(uid)), "test.txt"))
         res = app.post(
-            f"/api/questions/{str(ObjectId())}/answer",
+            f"/api/questions/{new_id()}/answer",
             data=file,
             content_type="multipart/form-data",
         )
@@ -48,7 +51,7 @@ class TestSubmitAnswer:
         """
         POST /api/questions/<question_id>/answer: accessing endpoint without user permission
         """
-        res = app.post(f"/api/questions/{str(ObjectId())}/answer")
+        res = app.post(f"/api/questions/{new_id()}/answer")
         assert res.status_code == 401
 
     def test_submit_answer_201(self, app):
