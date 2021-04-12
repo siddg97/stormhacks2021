@@ -2,17 +2,20 @@ import pytest
 import io
 import os
 from bson import ObjectId
-from tests.utils import (
-    get_test_app,
-    drop_all_collections,
-    set_test_cookie,
-    build_question,
-    generate_sample_webm,
-    cleanup_webm,
-    get_test_blob_url,
-)
+
 from app.utils.constants import TMP_DIR, WAV_EXT, WEBM_EXT
 
+from tests.utils.test_gcs import get_test_blob_url
+from tests.utils.test_db import drop_all_collections
+from tests.utils.test_factory import build_question
+from tests.utils.test_app import (
+    get_test_app, 
+    set_test_cookie
+)
+from tests.utils.test_audio import (
+    generate_sample_webm,
+    cleanup_webm,
+)
 
 @pytest.fixture
 def app():

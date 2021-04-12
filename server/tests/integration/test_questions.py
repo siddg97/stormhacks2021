@@ -1,13 +1,19 @@
 import pytest
 from bson import ObjectId
+
 from app.utils.misc import find
-from tests.utils import (
+
+from tests.utils.test_app import (
+    get_test_app, 
+    set_test_cookie
+)
+from tests.utils.test_db import ( 
+    drop_all_collections, 
+    find_question_by_id 
+)
+from tests.utils.test_factory import (
     build_question,
     build_questions,
-    drop_all_collections,
-    find_question_by_id,
-    get_test_app,
-    set_test_cookie,
 )
 
 

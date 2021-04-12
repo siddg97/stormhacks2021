@@ -2,7 +2,9 @@ import pytest
 import json
 from unittest.mock import patch, call
 from tasks import add
-from tests.utils import drop_all_collections, get_test_app
+
+from tests.utils.test_app import get_test_app
+from tests.utils.test_db import drop_all_collections
 
 
 @pytest.fixture

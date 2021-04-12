@@ -1,9 +1,12 @@
 import pytest
 from bson import ObjectId
-from tests.utils import (
+
+from tests.utils.test_db import drop_all_collections
+from tests.utils.test_app import ( 
     get_test_app, 
-    drop_all_collections, 
-    set_test_cookie,
+    set_test_cookie
+)
+from tests.utils.test_factory import (
     build_question,
     build_questions,
     seed_questions_with_sample_results
