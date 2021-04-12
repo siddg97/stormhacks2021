@@ -36,6 +36,7 @@ def retrieve_sample_webm(question_id):
     Retrieve generated webm sample in local directory
 
     @param: question_id - id for the particular question with a corresponding .webm file in the local directory
+    @returns: tuple containing the local .webm file stream, file name, and content-type
     """
     file = f"{TMP_DIR}/{question_id}{WEBM_EXT}"
 
@@ -44,7 +45,7 @@ def retrieve_sample_webm(question_id):
         filename=f"{question_id}{WEBM_EXT}",
         content_type="video/webm"
     )
-    
+
     return webm
 
 

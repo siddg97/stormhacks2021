@@ -22,6 +22,7 @@ def build_question(description, uid):
 
     @param: description - string for question description
     @param: uid         - id for user submitting the question
+    @returns: JSON structure for created question in db
     """
     question = create_question(description, uid)
     question_doc = insert_question(question)
@@ -35,6 +36,7 @@ def build_questions(uid, n=5):
 
     @param: uid - id for user submitting the questions
     @param: n   - number of questions generated
+    @returns: array containing the JSON structure for each question generated
     """
     questions = [None] * n
     for i in range(n):
@@ -47,6 +49,7 @@ def seed_questions_with_sample_results(questions, n=10):
     
     @param: questions - array of questions being seeded with data
     @param: n         - value to increment results stats by
+    @returns: array containing the questions with updated sample results
     """
     for q in questions:
         q["stats"]["number_of_pauses"] += n
