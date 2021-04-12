@@ -34,8 +34,7 @@ class TestSubmitAnswer:
         """
         POST /api/questions/<question_id>/answer: uses malformed file ending
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         file = dict(audio=(io.BytesIO(str.encode(uid)), "test.txt"))
         res = app.post(
@@ -56,8 +55,7 @@ class TestSubmitAnswer:
         """
         POST /api/questions/<question_id>/answer: submit proper file and check local directories
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
         question_id = build_question("test question", uid)["_id"]
 
         webm_path = f"{TMP_DIR}/{question_id}{WEBM_EXT}"

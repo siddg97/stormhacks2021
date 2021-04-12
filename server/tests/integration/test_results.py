@@ -37,8 +37,7 @@ class TestGetResultsByQuestionId:
         """
         GET /api/questions/<question_id>/results: provide invalid question_id
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         res = app.get(f"/api/questions/{str(ObjectId())}/results")
         assert res.status_code == 404
@@ -47,8 +46,7 @@ class TestGetResultsByQuestionId:
         """
         GET /api/questions/<question_id>/results: retrieve results for a valid [uid:question_id] combination
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
         question_id = build_question("Question 1", uid)["_id"]
 
         res = app.get(f"/api/questions/{question_id}/results")
@@ -60,12 +58,10 @@ class TestGetResultsByQuestionId:
         """
         GET /api/questions/<question_id>/results: attempt to retrieve question with invalid uid
         """
-        uid_one = str(ObjectId())
-        set_test_cookie(app, uid_one)
+        uid_one = set_test_cookie(app)
         question_one_id = build_question("Question 1", uid_one)["_id"]
 
-        uid_two = str(ObjectId())
-        set_test_cookie(app, uid_two)
+        uid_two = set_test_cookie(app)
         question_two_id = build_question("Question 2", uid_two)["_id"]
 
         res = app.get(f"/api/questions/{question_one_id}/results")
@@ -92,8 +88,7 @@ class TestGetResultsByUserId:
         """
         GET /api/questions/results: attempt to retrieve results without valid questions
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         res = app.get(f"/api/questions/results")
         assert res.status_code == 404
@@ -102,8 +97,7 @@ class TestGetResultsByUserId:
         """
         GET /api/questions/results: retrieve valid results
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
         build_question("Question 1", uid)
 
         res = app.get(f"/api/questions/results")
@@ -113,8 +107,7 @@ class TestGetResultsByUserId:
         """
         GET /api/questions/results: validate accuracy on retrieved results for a particular user
         """
-        uid = str(ObjectId())
-        set_test_cookie(app,uid)
+        uid = set_test_cookie(app)
         
         number_of_questions = 10
         questions = build_questions(uid, number_of_questions)

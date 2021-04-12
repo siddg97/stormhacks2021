@@ -67,15 +67,13 @@ class TestGetQuestion:
         assert res.status_code == 401
 
     def test_get_question_404(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         res = app.get(f"/api/questions/{str(ObjectId())}")
         assert res.status_code == 404
 
     def test_get_question_200(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
         question_doc = build_question("test question", uid)
 
         res = app.get(f"/api/questions/{question_doc['_id']}")
@@ -101,15 +99,13 @@ class TestGetQuestions:
         assert res.status_code == 401
 
     def test_get_questions_404(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         res = app.get(f"/api/questions")
         assert res.status_code == 404
 
     def test_get_questions_200(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         question_docs = build_questions(uid, 10)
 
