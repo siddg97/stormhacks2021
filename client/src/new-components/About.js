@@ -49,25 +49,25 @@ const About = () => {
       name: 'Brandon Situ',
       role: 'UI/UX, PM',
       school: 'SFU Business',
-      linkedin: 'linkedin.com/in/brandonsitu',
+      linkedin: 'https://linkedin.com/in/brandonsitu',
     }, {
       image: 'https://smartcdn.prod.postmedia.digital/windsorstar/wp-content/uploads/2015/02/cookiemonster.jpg',
       name: 'Jacob Pauls',
       role: 'Full Stack',
       school: 'BCIT Computing',
-      linkedin: 'linkedin.com/in/jacobpauls',
+      linkedin: 'https://linkedin.com/in/jacobpauls',
     }, {
       image: 'https://variety.com/wp-content/uploads/2020/05/not-too-late-show-with-elmo.jpg',
       name: 'Siddharth Gupta',
       role: 'Back End',
       school: 'SFU Computer Science',
-      linkedin: 'linkedin.com/in/siddg97',
+      linkedin: 'https://linkedin.com/in/siddg97',
     }, {
       image: 'https://ichef.bbci.co.uk/images/ic/640x360/p01wf46x.jpg',
       name: 'Shirley Vong',
       role: 'Front End',
       school: 'SFU Software Systems',
-      linkedin: 'linkedin.com/in/shirley-vong',
+      linkedin: 'https://linkedin.com/in/shirley-vong',
     },
   ];
 
