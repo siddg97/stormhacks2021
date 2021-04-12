@@ -5,7 +5,7 @@ import os
 import subprocess
 
 from app.factory import create_flask
-from app.mongodb.queries import create_question
+from app.mongodb.queries import create_question, write_stats
 from app.mongodb.utils import serialize_id
 from app.utils.constants import USER_COOKIE_KEY
 from app.utils.misc import delete_local_file
@@ -66,6 +66,15 @@ def build_questions(uid, n=5):
         questions[i] = build_question(f"Question {i+1}", uid)
     return questions
 
+def seed_questions_with_sample_results(questions, n=10):
+    """
+    Seeds a question array with sample results, each incremented by a static value
+    """
+    for q in questions:
+        q["stats"]["number_of_pauses"] += n
+        q["stats"]["words_per_min"] += n
+        write_stats(q["_id"], q["stats"])
+    return questions
 
 def generate_sample_webm(question_id):
     """
