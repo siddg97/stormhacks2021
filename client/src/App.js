@@ -1,28 +1,21 @@
 import styled from 'styled-components';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import LandingPage from './components/LandingPage';
-import ScanJobPage from './components/ScanJobPage';
-import QuestionsPage from './components/QuestionsPage';
-import QuestionChoicePage from './components/QuestionChoicePage';
-import IntervieweeTipsPage from './components/IntervieweeTipsPage';
-import InterviewerTipsPage from './components/InterviewerTipsPage';
-import ResultsPage from './components/ResultsPage';
-import InterviewPage from './components/InterviewPage';
-import PeerMatchPage from './components/PeerMatchPage';
-import Navbar from './components/Navbar';
-import ProgressBar from './components/ProgressBar';
-import './App.css';
-import 'rsuite/dist/styles/rsuite-default.css';
+import LandingPage from './pages/LandingPage';
+import InterviewPage from './pages/InterviewPage';
+import SelectQuestionPage from './pages/SelectQuestionPage';
+import ResultsPage from './pages/ResultsPage';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { useEffect, useState } from 'react';
-import Question from './components/Question';
+import { routes } from './constants';
+import GlobalStyle from './styles';
+import Navbar from './new-components/Navbar';
 
 const queryClient = new QueryClient();
 
 const Body = styled.div`
-    max-width: 1500px;
-    margin: 60px auto;
+    ${'' /* max-width: 1500px; */}
+    ${'' /* margin: 60px auto; */}
 `;
 
 function App() {
@@ -50,56 +43,19 @@ function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <Router>
+                <GlobalStyle />
                 <div className='App'>
                     <Navbar />
                     <Body>
                         <Switch>
-                            <Route
-                                path='/scan'
-                                render={() => (
-                                    <ScanJobPage
-                                        setUid={setUid}
-                                        setSq={setSoftQs}
-                                        setTq={setTechQs}
-                                    />
-                                )}
-                            />
-                            <Route
-                                path='/questions'
-                                render={() => (
-                                    <QuestionsPage
-                                        softQs={softQs}
-                                        techQs={techQs}
-                                        uid={uid}
-                                    />
-                                )}
-                            />
-                            <Route
-                                path='/choosequestions'
-                                render={() => (
-                                    <QuestionChoicePage
-                                        setGen={setChoseGen}
-                                        setSoft={setChoseSoft}
-                                        setTech={setChoseTech}
-                                    />
-                                )}
-                            />
-                            <Route
-                                path='/question'
-                                render={() => (
-                                    <Question
-                                        uid={uid}
-                                        qid={currQ}
-                                        setQid={setQid}
-                                        softQs={softQs}
-                                        techQs={techQs}
-                                        soft={choseSoft}
-                                        tech={choseTech}
-                                    />
-                                )}
-                            />
-                            <Route path='/results'>
-                                <div>Results go here...</div>
+                            <Route path={routes.INTERVIEW}>
+                                <InterviewPage />
+                            </Route>
+                            <Route path={routes.RESULTS}>
+                                <ResultsPage />
+                            </Route>
+                            <Route path={routes.SELECT_QUESTIONS}>
+                                <SelectQuestionPage />
                             </Route>
                             <Route path='/'>
                                 <LandingPage />
