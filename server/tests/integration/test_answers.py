@@ -73,7 +73,7 @@ class TestSubmitAnswer:
         assert question_response
         assert len(question_response) >= 1
 
-        blob_path = f"{uid}/{question_id}{WAV_EXT}"
+        blob_path = f"{uid}/{question_id}{WEBM_EXT}"
         blob_url = res.json.get("question").get("answer")
         assert blob_url
         assert blob_url == get_test_blob_url(blob_path)
