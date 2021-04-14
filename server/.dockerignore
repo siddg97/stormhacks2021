@@ -9,4 +9,5 @@ env
 Makefile
 README.md
 .gitignore
+creds.json
 # tests
