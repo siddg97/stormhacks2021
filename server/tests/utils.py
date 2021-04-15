@@ -9,16 +9,8 @@ from app.mongodb.queries import create_question
 from app.mongodb.utils import serialize_id
 from app.utils.constants import USER_COOKIE_KEY
 from app.utils.misc import delete_local_file
-from app.utils.gcs import ( 
-    delete_file, 
-    get_blob_url 
-)
-from app.utils.constants import ( 
-    GCS_BUCKET, 
-    TMP_DIR, 
-    WAV_EXT, 
-    WEBM_EXT 
-) 
+from app.utils.gcs import delete_file, get_blob_url
+from app.utils.constants import GCS_BUCKET, TMP_DIR, WEBM_EXT
 
 mongo = MongoClient(os.getenv("TEST_MONGO_URI"))
 db = mongo["test_db"]
@@ -69,7 +61,7 @@ def build_questions(uid, n=5):
 
 def generate_sample_webm(question_id):
     """
-    Generate a sample webm file from a question id for testing 
+    Generate a sample webm file from a question id for testing
     """
     command = [
         "ffmpeg",
@@ -77,7 +69,7 @@ def generate_sample_webm(question_id):
         "lavfi",
         "-i",
         "sine=frequency=1000:duration=5",
-        f"{TMP_DIR}/{question_id}{WEBM_EXT}"
+        f"{TMP_DIR}/{question_id}{WEBM_EXT}",
     ]
     subprocess.run(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
@@ -93,9 +85,9 @@ def retrieve_sample_webm(question_id):
     webm = FileStorage(
         stream=open(file, "rb"),
         filename=f"{question_id}{WEBM_EXT}",
-        content_type="video/webm"
+        content_type="video/webm",
     )
-    
+
     return webm
 
 
@@ -107,7 +99,7 @@ def cleanup_webm(uid, question_id):
     if os.path.exists(local_path):
         delete_local_file(local_path)
 
-    gcs_path = f"{uid}/{question_id}{WAV_EXT}"
+    gcs_path = f"{uid}/{question_id}{WEBM_EXT}"
     delete_file(GCS_BUCKET, gcs_path)
 
 

@@ -1,4 +1,4 @@
-from app.utils.constants import TMP_DIR, WAV_EXT
+from app.utils.constants import TMP_DIR, WAV_EXT, WEBM_EXT
 from app.utils.gcs import decompose_gcs_uri
 from app.utils.audio import compute_stats
 from app.utils.misc import delete_local_file
@@ -26,16 +26,17 @@ def process_audio_stats(self, file_uri):
     info_log("Processing audio", question_id)
     stats = compute_stats(file_uri)
 
-    self.update_state(state="PROGRESS", meta=metadata("Uploading stats", 80))
+    self.update_state(state="PROGRESS", meta=metadata("Uploading stats", 70))
     info_log(f"Saving result", question_id)
     mongo = Mongo()
     mongo.save_stats(question_id, stats)
 
-    self.update_state(state="PROGRESS", meta=metadata("Cleaning up", 90))
+    self.update_state(state="PROGRESS", meta=metadata("Cleaning up", 80))
     info_log("Cleaning up temp files", question_id)
-    delete_local_file(f"{TMP_DIR}/{question_id}.TextGrid")
-    delete_local_file(f"{TMP_DIR}/{question_id}{WAV_EXT}")
 
+    cleanup_ext = [WEBM_EXT, WAV_EXT, ".TextGrid"]
+    for ext in cleanup_ext:
+        delete_local_file(f"{TMP_DIR}/{question_id}{ext}")
     info_log("Processing audio complete", question_id)
 
     return metadata("Completed processing stats!", 100, stats)

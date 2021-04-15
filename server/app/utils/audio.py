@@ -1,7 +1,7 @@
 from app.utils.constants import GCS_BUCKET, WAV_EXT, WEBM_EXT, TMP_DIR
 import subprocess
 from google.cloud import speech
-from app.utils.gcs import decompose_gcs_uri, read_file
+from app.utils.gcs import decompose_gcs_uri, read_file, upload_file
 from parselmouth.praat import run_file
 import pandas as pd
 import numpy as np
@@ -57,20 +57,28 @@ def compute_stats(uri):
     if not uri:
         return None
 
-    try:
-        # get transcript
-        tramscript, accuracy = get_transcript(uri)
+    # download answer file
+    bucket, path, name = decompose_gcs_uri(uri)
+    local_path = f"{TMP_DIR}/{name}"
+    read_file(bucket, path, local_path)
 
-        # download answer file
-        bucket, path, name = decompose_gcs_uri(uri)
-        read_file(bucket, path, f"{TMP_DIR}/{name}")
+    # convert webm to wav file
+    convert_to_wav(local_path.replace(WEBM_EXT, ""))
 
-        # compute stats
-        stats = get_stats(tramscript, name, TMP_DIR)
-        stats = dict(**stats, accuracy=accuracy)
-        return stats
-    except:
-        return None
+    # Upload wav file to gcs
+    upload_file(
+        bucket,
+        f"{path.replace(WEBM_EXT, WAV_EXT)}",
+        f"{local_path}",
+    )
+
+    # get transcript
+    transcript, accuracy = get_transcript(uri)
+
+    # compute stats
+    stats = get_stats(transcript, name.replace(WEBM_EXT, WAV_EXT), TMP_DIR)
+    stats = dict(**stats, accuracy=accuracy)
+    return stats
 
 
 def sentiment_analysis(z1):
