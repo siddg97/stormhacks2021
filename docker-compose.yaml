@@ -91,6 +91,8 @@ services:
             - GOOGLE_APPLICATION_CREDENTIALS=creds.json
             - MONGO_URI=mongodb://db:27017/db
             - REDIS_URI=redis://redis_queue:6379/0
+        volumes:
+            - ./server:/app
 
     # Flower dashboard for celery
     flower:

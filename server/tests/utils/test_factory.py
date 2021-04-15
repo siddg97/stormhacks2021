@@ -3,10 +3,7 @@ from bson import ObjectId
 from app.mongodb.queries import create_question
 from app.mongodb.utils import serialize_id
 
-from tests.utils.test_db import ( 
-    insert_question, 
-    write_test_stats
-)
+from tests.utils.test_db import insert_question, write_test_stats
 
 
 def new_id():

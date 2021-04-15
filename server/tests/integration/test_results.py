@@ -2,10 +2,7 @@ import pytest
 from bson import ObjectId
 
 from tests.utils.test_db import drop_all_collections
-from tests.utils.test_app import ( 
-    get_test_app, 
-    set_test_cookie
-)
+from tests.utils.test_app import get_test_app, set_test_cookie
 from tests.utils.test_factory import (
     new_id,
     build_question,

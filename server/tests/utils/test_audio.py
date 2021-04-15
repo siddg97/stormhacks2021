@@ -4,12 +4,7 @@ import subprocess
 
 from app.utils.misc import delete_local_file
 from app.utils.gcs import delete_file
-from app.utils.constants import ( 
-    GCS_BUCKET, 
-    TMP_DIR, 
-    WAV_EXT, 
-    WEBM_EXT 
-) 
+from app.utils.constants import GCS_BUCKET, TMP_DIR, WEBM_EXT
 
 
 def generate_sample_webm(question_id):
@@ -24,7 +19,7 @@ def generate_sample_webm(question_id):
         "lavfi",
         "-i",
         "sine=frequency=1000:duration=5",
-        f"{TMP_DIR}/{question_id}{WEBM_EXT}"
+        f"{TMP_DIR}/{question_id}{WEBM_EXT}",
     ]
     subprocess.run(command, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
 
@@ -43,7 +38,7 @@ def retrieve_sample_webm(question_id):
     webm = FileStorage(
         stream=open(file, "rb"),
         filename=f"{question_id}{WEBM_EXT}",
-        content_type="video/webm"
+        content_type="video/webm",
     )
 
     return webm
@@ -60,5 +55,5 @@ def cleanup_webm(uid, question_id):
     if os.path.exists(local_path):
         delete_local_file(local_path)
 
-    gcs_path = f"{uid}/{question_id}{WAV_EXT}"
+    gcs_path = f"{uid}/{question_id}{WEBM_EXT}"
     delete_file(GCS_BUCKET, gcs_path)
