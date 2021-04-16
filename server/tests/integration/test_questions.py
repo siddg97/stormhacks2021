@@ -1,14 +1,11 @@
 import pytest
 from bson import ObjectId
+
 from app.utils.misc import find
-from tests.utils import (
-    build_question,
-    build_questions,
-    drop_all_collections,
-    find_question_by_id,
-    get_test_app,
-    set_test_cookie,
-)
+
+from tests.utils.test_app import get_test_app, set_test_cookie
+from tests.utils.test_db import drop_all_collections, find_question_by_id
+from tests.utils.test_factory import new_id, build_question, build_questions
 
 
 @pytest.fixture
@@ -57,19 +54,17 @@ class TestAddQuestions:
 
 class TestGetQuestion:
     def test_get_question_401(self, app):
-        res = app.get(f"/api/questions/{str(ObjectId())}")
+        res = app.get(f"/api/questions/{new_id()}")
         assert res.status_code == 401
 
     def test_get_question_404(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
-        res = app.get(f"/api/questions/{str(ObjectId())}")
+        res = app.get(f"/api/questions/{new_id()}")
         assert res.status_code == 404
 
     def test_get_question_200(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
         question_doc = build_question("test question", uid)
 
         res = app.get(f"/api/questions/{question_doc['_id']}")
@@ -95,15 +90,13 @@ class TestGetQuestions:
         assert res.status_code == 401
 
     def test_get_questions_404(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         res = app.get(f"/api/questions")
         assert res.status_code == 404
 
     def test_get_questions_200(self, app):
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         question_docs = build_questions(uid, 10)
 

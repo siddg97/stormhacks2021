@@ -2,17 +2,23 @@ import pytest
 import io
 import os
 from bson import ObjectId
-from tests.utils import (
-    get_test_app,
-    drop_all_collections,
-    set_test_cookie,
-    build_question,
-    generate_sample_webm,
-    cleanup_webm,
-    get_test_blob_url,
-)
+
 from app.utils.constants import TMP_DIR, WAV_EXT, WEBM_EXT
 
+from tests.utils.test_gcs import get_test_blob_url
+from tests.utils.test_db import drop_all_collections
+from tests.utils.test_factory import (
+    new_id,
+    build_question
+)
+from tests.utils.test_app import (
+    get_test_app, 
+    set_test_cookie
+)
+from tests.utils.test_audio import (
+    generate_sample_webm,
+    cleanup_webm,
+)
 
 @pytest.fixture
 def app():
@@ -31,12 +37,11 @@ class TestSubmitAnswer:
         """
         POST /api/questions/<question_id>/answer: uses malformed file ending
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
 
         file = dict(audio=(io.BytesIO(str.encode(uid)), "test.txt"))
         res = app.post(
-            f"/api/questions/{str(ObjectId())}/answer",
+            f"/api/questions/{new_id()}/answer",
             data=file,
             content_type="multipart/form-data",
         )
@@ -46,15 +51,14 @@ class TestSubmitAnswer:
         """
         POST /api/questions/<question_id>/answer: accessing endpoint without user permission
         """
-        res = app.post(f"/api/questions/{str(ObjectId())}/answer")
+        res = app.post(f"/api/questions/{new_id()}/answer")
         assert res.status_code == 401
 
     def test_submit_answer_201(self, app):
         """
         POST /api/questions/<question_id>/answer: submit proper file and check local directories
         """
-        uid = str(ObjectId())
-        set_test_cookie(app, uid)
+        uid = set_test_cookie(app)
         question_id = build_question("test question", uid)["_id"]
 
         webm_path = f"{TMP_DIR}/{question_id}{WEBM_EXT}"
