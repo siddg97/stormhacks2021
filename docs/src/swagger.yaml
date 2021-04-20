@@ -330,10 +330,15 @@ components:
           type: string
           default: pong
     CreateQuestions:
-        type: array
-        items:
-          type: string
-        example: ["Why do you want to work for our company?", "Why do you think you are a good candidate for this position?"]
+        type: object
+        required:
+          - questions
+        properties:
+          questions:
+            type: array
+            items:
+              type: string
+            example: ["Why do you want to work for our company?", "Why do you think you are a good candidate for this position?"]
     CreateQuestionsResponse:
       type: object
       required:
