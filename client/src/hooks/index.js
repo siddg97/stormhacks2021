@@ -31,3 +31,26 @@ export const useGetQuestions = ({ description, options }) => {
         ...options,
     });
 };
+
+const setQuestions = async (questions) => {
+    const body = JSON.stringify({ questions });
+    const { data } = await axios.post('/api/questions', body);
+    return data;
+};
+
+export const useSetQuestions = (questions) => {
+    const {
+        isLoading, isError, data, error,
+    } = useQuery('questionIDs', () => setQuestions(questions));
+
+    return { isLoading, isError, error, questionIDs: data && data['questions'] };
+};
+
+export const submitAnswer = async (file, questionID) => {
+    const formData = new FormData();
+    formData.append('audio', file);
+    formData.append('name', 'testname');
+
+    const { data } = await axios.post(`/api/questions/${questionID}/answer`, formData);
+    return data;
+}
