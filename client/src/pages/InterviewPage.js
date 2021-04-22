@@ -3,7 +3,8 @@ import { useLocation, useHistory } from 'react-router-dom';
 import Question from '../new-components/Question';
 import { routes } from '../constants';
 import styled from 'styled-components';
-import { useSetQuestions, useSubmitAnswer, submitAnswer } from '../hooks';
+import { useSetQuestions } from '../hooks';
+import { submitAnswer } from '../api';
 import { useMutation } from 'react-query';
 
 const Div = styled.div`
