@@ -4,8 +4,9 @@ import { routes } from '../constants';
 
 const ResultsPage = () => {
   const history = useHistory();
-  // const { questions } = useLocation().state;
+  const { pollURLs } = useLocation().state;
 
+  console.log('ResultsPage: ', pollURLs);
   const handleClick = () => {
     history.push(routes.SELECT_QUESTIONS);
   };
