@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ReactComponent as Logo } from '../logoWithTitle.svg';
+import { ReactComponent as Logo } from '../svg/logoWithTitle.svg';
+import { useHistory } from 'react-router-dom';
+import { routes } from '../constants';
 
 const Div = styled.div`
-  height: 50px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,19 +24,37 @@ const List = styled.ul`
   list-style-type: none;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
 const ListItem = styled.li`
   padding: 30px;
 `;
 
-const Navbar = () => (
-  <Div>
-    <StyledLogo />
-    <List>
-      <ListItem><a href="/">Home</a></ListItem>
-    </List>
-  </Div>
-);
+const LeftDiv = styled.div`
+  height: 100%;
+`;
+
+const Navbar = () => {
+  const history = useHistory();
+
+  const interview = () => {
+    history.push(routes.SELECT_QUESTIONS);
+  }
+
+  return (
+    <Div>
+      <LeftDiv>
+        <a href="/"><StyledLogo /></a>
+      </LeftDiv>
+      <List>
+        <ListItem><a href="/">Home</a></ListItem>
+        <ListItem><a href="/">About</a></ListItem>
+        <ListItem><a href="/">Tips</a></ListItem>
+        <ListItem><button onClick={interview}>Start Interview</button></ListItem>
+      </List>
+    </Div>
+  );
+}
 
 export default Navbar;

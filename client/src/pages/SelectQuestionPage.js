@@ -31,10 +31,15 @@ const QuestionSelectPage = () => {
   return (
     <Div>
       <Header>Instructions</Header>
-      <p>{SELECT_QUESTIONS_INSTRUCTIONS}</p>
+      <ol>
+        <li>Input the 5 questions you want InterviewBuddy to ask you</li>
+        <li>Ensure your mic is working and your audio is on</li>
+        <li>Press "Let's Practice!" to start the interview with our interview bot</li>
+        <li>Record your answer by pressing "Start Recording" and press "Stop Recording" when you're done</li>
+        <li>Either play back the recording, rerecord your answer, or press "Next" to continue</li>
+      </ol>
 
-      <Header>Select Your Questions</Header>
-      <p>{SELECT_QUESTIONS_INFO}</p>
+      <Header>Select Questions</Header>
       <FormWrapper>
         <QuestionsForm handleSubmit={submit} />
       </FormWrapper>
