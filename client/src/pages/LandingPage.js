@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import About from '../new-components/About';
 import { routes } from '../constants';
-import { ReactComponent as Logo } from '../logoWithTitle.svg';
+import { ReactComponent as Logo } from '../svg/logoWithTitle.svg';
 
 const Div = styled.div`
   display: flex;

@@ -1,9 +1,19 @@
 import { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
+  html, body, #root, .App {
+    height: 100%;
+    margin: 0;
+  }
+
+  .App {
+    display: flex;
+    flex-direction: column;
+  }
+
   html {
     --color-primary: #3C64B1;
-    --color-text: #737B7D;
+    --color-text: #474747;
     --color-heading: #373F41;
 
     --font-text: 'Mulish', sans-serif;
@@ -27,10 +37,10 @@ export default createGlobalStyle`
     text-decoration: none;
     font-weight: bold;
     color: var(--color-primary);
-  }
 
-  a:hover {
-    text-decoration: underline;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   button {
@@ -45,7 +55,21 @@ export default createGlobalStyle`
     border: none;
 
     &:hover {
-    opacity: 0.85;
-    transition: opacity 0.1s linear;
+      opacity: 0.85;
+      transition: opacity 0.1s linear;
+    }
+
+    &:disabled {
+      background-color: grey;
+
+      &:hover {
+        opacity: 1;
+        transition: none
+      }
+    }
+  }
+
+  input {
+    font-family: var(--font-text);
   }
 `;

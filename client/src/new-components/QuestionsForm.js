@@ -4,12 +4,12 @@ import styled from 'styled-components';
 const Label = styled.label`
   color: var(--color-primary);
   font-weight: bold;
-  padding-right: 40px;
+  padding-bottom: 5px;
 `;
 
 const Form = styled.form`
   background-color: rgba(196, 196, 196, 0.7);
-  padding: 8px;
+  padding: 10px;
   border-radius: 3px;
   margin-bottom: 10px;
 `;
@@ -25,6 +25,7 @@ const Input = styled.input`
 const QuestionDiv = styled.div`
   padding: 8px;
   display: flex;
+  flex-direction: column;
 `;
 
 const Button = styled.button`
@@ -33,9 +34,9 @@ const Button = styled.button`
 `;
 
 const QuestionsForm = ({ handleSubmit }) => {
-  const NUM_QUESTIONS = 1;
+  const NUM_QUESTIONS = 5;
 
-  const [questions, _] = useState([...Array(NUM_QUESTIONS).fill('')]);
+  const [questions, setQuestions] = useState([...Array(NUM_QUESTIONS).fill('')]);
   const [emptyInputs, setEmptyInputs] = useState(new Set());
 
   const getEmptyInputs = () => questions.reduce((acc, val, idx) => {
@@ -58,6 +59,7 @@ const QuestionsForm = ({ handleSubmit }) => {
 
   const handleChange = (idx) => (event) => {
     questions[idx] = event.target.value;
+    setQuestions([...questions]);
   };
 
   return (
@@ -71,11 +73,15 @@ const QuestionsForm = ({ handleSubmit }) => {
               style={{ border: emptyInputs.has(idx) ? '2px solid red' : undefined }}
               onChange={handleChange(idx)}
               type="text"
+              placeholder={`Enter question ${idx + 1} here`}
             />
           </QuestionDiv>
         ))}
       </Form>
-      <Button onClick={submit} form="questions">Let's Practice!</Button>
+
+      {getEmptyInputs().size === 0
+        ? <Button onClick={submit} form="questions">Let's Practice!</Button>
+        : <Button form="questions" disabled>Let's Practice!</Button>}
     </div>
   );
 };

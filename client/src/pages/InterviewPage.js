@@ -2,6 +2,15 @@ import { useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import Question from '../new-components/Question';
 import { routes } from '../constants';
+import styled from 'styled-components';
+
+const Div = styled.div`
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  ${'' /* justify-content: center; */}
+  align-items: center;
+`;
 
 const InterviewPage = () => {
   const history = useHistory();
@@ -28,14 +37,17 @@ const InterviewPage = () => {
   };
 
   return (
-    <div>
-      <div>{idx + 1}/{questions.length}</div>
-      <Question
-        question={questions[idx]}
-        questionNum={idx + 1}
-        handleQuestionDone={handleQuestionDone}
-      />
-    </div>
+    <Div>
+      <div>
+        <h2>{idx + 1}/{questions.length}</h2>
+        <Question
+          question={questions[idx]}
+          questionNum={idx + 1}
+          handleQuestionDone={handleQuestionDone}
+          isLastQ={idx === questions.length - 1}
+        />
+      </div>
+    </Div>
   );
 };
 

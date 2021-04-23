@@ -1,9 +1,10 @@
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { routes } from '../constants';
 
 const ResultsPage = () => {
   const history = useHistory();
+  // const { questions } = useLocation().state;
 
   const handleClick = () => {
     history.push(routes.SELECT_QUESTIONS);

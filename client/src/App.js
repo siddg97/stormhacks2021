@@ -14,8 +14,7 @@ import Navbar from './new-components/Navbar';
 const queryClient = new QueryClient();
 
 const Body = styled.div`
-    ${'' /* max-width: 1500px; */}
-    ${'' /* margin: 60px auto; */}
+    flex-grow: 1;
 `;
 
 function App() {
