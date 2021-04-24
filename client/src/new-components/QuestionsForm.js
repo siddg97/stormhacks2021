@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { QUESTION_BANK } from '../constants';
 
 const Label = styled.label`
   color: var(--color-primary);
@@ -36,25 +37,18 @@ const Button = styled.button`
 const QuestionsForm = ({ handleSubmit }) => {
   const NUM_QUESTIONS = 5;
 
-  const [questions, setQuestions] = useState([...Array(NUM_QUESTIONS).fill('')]);
-  const [emptyInputs, setEmptyInputs] = useState(new Set());
+  const getRandomQs = () => {
+    return [...QUESTION_BANK].sort(() => 0.5 - Math.random()).slice(0, NUM_QUESTIONS);
+  }
 
-  const getEmptyInputs = () => questions.reduce((acc, val, idx) => {
-    if (val === '') {
-      acc.add(idx);
-    }
-    return acc;
-  }, new Set());
+  const [questions, setQuestions] = useState([...Array(NUM_QUESTIONS).fill('')]);
+  const [sampleQs, _] = useState(getRandomQs());
 
   const submit = (event) => {
     event.preventDefault();
 
-    const invalidInputs = getEmptyInputs();
-    if (invalidInputs.size === 0) {
-      handleSubmit(questions);
-    } else {
-      setEmptyInputs(invalidInputs);
-    }
+    const qs = questions.map((q, idx) => q === '' ? sampleQs[idx] : q)
+    handleSubmit(qs);
   };
 
   const handleChange = (idx) => (event) => {
@@ -70,18 +64,15 @@ const QuestionsForm = ({ handleSubmit }) => {
             <Label htmlFor={`question${idx}`}>Question {idx + 1}</Label>
             <Input
               id={`question${idx}`}
-              style={{ border: emptyInputs.has(idx) ? '2px solid red' : undefined }}
               onChange={handleChange(idx)}
               type="text"
-              placeholder={`Enter question ${idx + 1} here`}
+              placeholder={sampleQs[idx]}
             />
           </QuestionDiv>
         ))}
       </Form>
 
-      {getEmptyInputs().size === 0
-        ? <Button onClick={submit} form="questions">Let's Practice!</Button>
-        : <Button form="questions" disabled>Let's Practice!</Button>}
+      <Button onClick={submit} form="questions">Let's Practice!</Button>
     </div>
   );
 };

@@ -20,8 +20,7 @@ const InterviewPage = () => {
   const [idx, setIdx] = useState(0);
   const [pollURLs, setPollURLs] = useState([]);
 
-  const textQuestions = ['Tell me about yourself.'];
-  // const { textQuestions } = useLocation().state;
+  const { questions: textQuestions } = useLocation().state;
 
   useEffect(() => {
     if (pollURLs.length === textQuestions.length) {
