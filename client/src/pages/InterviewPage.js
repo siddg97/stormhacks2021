@@ -46,7 +46,7 @@ const InterviewPage = () => {
     return <span>Loading...</span>
   }
 
-  const handleQuestionDone = (answer) => {
+  const submitAnswer = (answer) => {
     if (idx < questions.length) {
       const blob = answer ? answer.blob : null;
       const file = new File([blob], `${questions[idx].id}.webm`)
@@ -73,7 +73,7 @@ const InterviewPage = () => {
         <Question
           question={questions[idx].text}
           questionNum={idx + 1}
-          handleQuestionDone={handleQuestionDone}
+          submitAnswer={submitAnswer}
           isLastQ={idx === questions.length - 1}
         />
       </div>

@@ -15,21 +15,42 @@ const Div = styled.div`
   flex-direction: column;
 `;
 
-const Question = ({ question, questionNum, handleQuestionDone, isLastQ }) => {
+const RecordButton = styled.button`
+  background-color: ${props => props.isRecording ? "red" : "green"}
+`;
+
+const Question = ({ question, questionNum, submitAnswer, isLastQ }) => {
   const [answer, setAnswer] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
 
   const handleNext = () => {
-    handleQuestionDone(answer);
+    submitAnswer(answer);
+  };
+
+  const playRecording = () => {
+    console.log('playing recording');
+  };
+
+  const handleRecord = () => setIsRecording(!isRecording);
+
+  const handleStop = (recdAudio) => {
+    setAnswer(recdAudio);
   };
 
   return (
     <Div>
       <h1>Q{questionNum}: {question}</h1>
       <StyledBot />
-      <AudioRecorder onFinish={setAnswer}/>
-      <div>
-        <button onClick={handleNext}>{isLastQ ? 'Finish' : 'Next'}</button>
-      </div>
+      <AudioRecorder handleRecord={handleRecord} handleStop={handleStop} isRecording={isRecording}/>
+      <RecordButton onClick={handleRecord} isRecording={isRecording}>
+        {isRecording ? 'Stop Recording' : 'Start Recording'}
+      </RecordButton>
+      <button onClick={playRecording} disabled={isRecording || !answer}>
+        Play recording
+      </button>
+      <button onClick={handleNext} disabled={isRecording || !answer}>
+        {isLastQ ? 'Finish' : 'Next'}
+      </button>
     </Div>
   )
 };
