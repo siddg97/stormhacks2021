@@ -43,5 +43,5 @@ export const useGetResults = (pollURLs) => {
     }
   }
 
-  return { isLoading, isError, results };
+  return { isLoading, isError, results: results.map(r => r.result) };
 }
