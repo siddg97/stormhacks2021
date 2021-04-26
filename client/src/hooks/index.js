@@ -1,33 +1,47 @@
-import { useQuery } from 'react-query';
-import axios from 'axios';
+import { useState } from 'react';
+import { useQuery, useQueries } from 'react-query';
+import { setQuestions, getResult  } from '../api';
 
-const processRecording = async (blob, uid) => {
-    const formData = new FormData();
-    formData.append('audio', blob);
+export const useSetQuestions = (questions) => {
+  const {
+    isLoading, isError, data, error,
+  } = useQuery('questionIDs', () => setQuestions(questions));
 
-    await axios.post(`/api/submit-answer/${uid}`, formData, { timeout: 300000 });
+  return { isLoading, isError, error, questionIDs: data && data['questions'] };
 };
 
-export const useProcessAudio = ({ blobState, qid, uid, options }) => {
-    return useQuery(`process-audio-${qid}`, () => processRecording(blobState, uid), {
-        retry: 0,
-        enabled: false,
-        refetchOnWindowFocus: false,
-        ...options,
-    });
-};
+export const useGetResults = (pollURLs) => {
+  const [results, setResults] = useState([]);
+  const refetchInterval = 2 * 1000;
 
-const getQuestions = async (description) => {
-    const body = { jobdesc: JSON.stringify(description) };
-    const { data } = await axios.post('/api/gen-questions', body);
-    return data;
-};
+  const queries = useQueries(
+    pollURLs.map((url, idx) => ({
+      queryKey: ['results', url],
+      queryFn: () => getResult(url),
+      refetchInterval: results[idx] ? false : refetchInterval,
+      onSuccess: (data) => {
+        if (data.state !== 'PROGRESS') {
+          results[idx] = data;
+          setResults([...results]);
+        }
+      }
+    })),
+  );
 
-export const useGetQuestions = ({ description, options }) => {
-    return useQuery(`get-questions`, () => getQuestions(description), {
-        retry: 0,
-        enabled: false,
-        refetchOnWindowFocus: false,
-        ...options,
-    });
-};
+  let isLoading = false;
+  let isError = false;
+
+  for (let i = 0; i < queries.length; i++) {
+    if (queries[i].isLoading || (queries[i].isSuccess && queries[i].data.state === 'PROGRESS')) {
+      isLoading = true;
+      break;
+    }
+
+    if (queries[i].isError || (queries[i].isSuccess && queries[i].data.state === 'FAILURE')) {
+      isError = true;
+      break;
+    }
+  }
+
+  return { isLoading, isError, results: results.map(r => r.result) };
+}
