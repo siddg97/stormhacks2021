@@ -9,7 +9,7 @@ Werkzeug==1.0.1
 google-cloud-speech==2.0.1
 google-cloud-storage==1.35.0
 praat-parselmouth==0.3.3
-numpy==1.17.4
+numpy==1.22.0
 pandas==1.2.0
 pytest==6.2.2
 celery==4.4.7
